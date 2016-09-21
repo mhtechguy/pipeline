@@ -90,6 +90,12 @@ dist-webui-rpm : assembly/.dependencies
 run : assembly/target/dev-launcher/bin/pipeline2
 	$<
 
+.PHONY : run-osgi-less
+run-osgi-less : compile
+	cd assembly && \
+	$(MVN) clean package -Posgi-less && \
+	target/osgi-less/start.sh
+
 .PHONY : run-gui
 run-gui : assembly/target/dev-launcher/bin/pipeline2
 	$< gui
