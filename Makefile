@@ -150,6 +150,17 @@ libs/jstyleparser/.install-sources.jar : libs/jstyleparser/.install
 
 modules/scripts/dtbook-to-odt/.install-doc.jar : $(call rwildcard,modules/scripts/dtbook-to-odt/src/test/,*)
 
+libs/liblouis/.install : $(call rwildcard,libs/liblouis/src/liblouis,*)
+
+.SECONDARY : \
+	libs/liblouis/.install.nar \
+	libs/liblouis/.install-noarch.nar \
+	libs/liblouis/.install-${nar.aol}-shared.nar
+libs/liblouis/.install.nar \
+libs/liblouis/.install-noarch.nar \
+libs/liblouis/.install-${nar.aol}-shared.nar : \
+	libs/liblouis/.install
+
 .SECONDARY : \
 	modules/braille/liblouis-utils/liblouis-native/.install-mac.jar \
 	modules/braille/liblouis-utils/liblouis-native/.install-linux.jar \
@@ -311,3 +322,5 @@ help :
 ifndef VERBOSE
 .SILENT:
 endif
+
+.SUFFIXES:
