@@ -184,7 +184,7 @@ $(SAXON) :
 				cp $$pom $$dest; \
 			fi \
 		done && \
-		$(MVN) --projects $$(cat $< |paste -sd , -) help:effective-pom -Doutput=$(CURDIR)/$@ >maven.log; \
+		$(MVN) --projects $$(cat $< |paste -sd , -) org.apache.maven.plugins:maven-help-plugin:2.2:effective-pom -Doutput=$(CURDIR)/$@ >maven.log; \
 	else \
 		touch $@; \
 	fi
