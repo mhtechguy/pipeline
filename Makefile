@@ -1,8 +1,8 @@
-POMS := $(shell find * -name pom.xml ! -path '*/target/*' ! -path '*/src/*')
+POMS := $(shell find * -name pom.xml ! -path '*/target/*' ! -path '*/src/*') website/target/maven/pom.xml
 MAVEN_MODULES := $(patsubst %/pom.xml,%,$(filter-out pom.xml,$(POMS)))
 GRADLE_FILES := $(shell find * -name build.gradle -o -name settings.gradle -o -name gradle.properties)
 GRADLE_MODULES := $(patsubst %/build.gradle,%,$(filter %/build.gradle,$(GRADLE_FILES)))
-MODULES := $(MAVEN_MODULES) $(GRADLE_MODULES)
+MODULES := $(MAVEN_MODULES) $(GRADLE_MODULES) webui
 GITREPOS := $(shell find * -name .gitrepo -exec dirname {} \;)
 
 MVN_WORKSPACE := .maven-workspace
@@ -109,7 +109,7 @@ release : assembly/.release
 .PHONY : $(addprefix check-,$(MODULES))
 $(addprefix check-,$(MODULES)) : check-% : %/.last-tested
 
-assembly/target/dev-launcher/bin/pipeline2 : assembly/.dependencies | .maven-init
+assembly/target/dev-launcher/bin/pipeline2 : assembly/pom.xml assembly/.dependencies | .maven-init
 	cd assembly && \
 	$(MVN) clean package -Pdev-launcher | $(MVN_LOG)
 	rm assembly/target/dev-launcher/etc/*windows*
@@ -124,7 +124,7 @@ include $(shell find * -name .deps.mk)
 else
 ifneq ($(MAKECMDGOALS), dump-maven-cmd)
 ifneq ($(MAKECMDGOALS), clean-website)
--include $(addsuffix /.deps.mk,$(MODULES) website/target/maven webui)
+-include $(addsuffix /.deps.mk,$(MODULES))
 endif
 endif
 endif
@@ -133,7 +133,7 @@ SAXON := $(MVN_WORKSPACE)/net/sf/saxon/Saxon-HE/9.4/Saxon-HE-9.4.jar
 export SAXON
 
 ifneq ($(MAKECMDGOALS), clean)
-$(addsuffix /.deps.mk,$(MAVEN_MODULES) website/target/maven) : .maven-deps.mk
+$(addsuffix /.deps.mk,$(MAVEN_MODULES)) : .maven-deps.mk
 	if ! test -e $@; then \
 		if cat .maven-modules | grep -Fx "$$(dirname $@)" >/dev/null; then \
 			echo "\$$(error $@ could not be generated)" >$@; \
@@ -144,7 +144,7 @@ endif
 
 .SECONDARY : .maven-deps.mk
 .maven-deps.mk : .effective-pom.xml .gradle-pom.xml | $(SAXON)
-	rm -f $(addsuffix /.deps.mk,$(MAVEN_MODULES) website/target/maven) && \
+	rm -f $(addsuffix /.deps.mk,$(MAVEN_MODULES)) && \
 	if ! java -cp $(SAXON) net.sf.saxon.Transform \
 	          -s:$< \
 	          -xsl:.make/make-maven-deps.mk.xsl \
@@ -157,7 +157,7 @@ endif
 	          OUTPUT_FILENAME=".deps.mk" \
 	          >/dev/null \
 	; then \
-		rm -f $(addsuffix /.deps.mk,$(MAVEN_MODULES) website/target/maven) && \
+		rm -f $(addsuffix /.deps.mk,$(MAVEN_MODULES)) && \
 		exit 1; \
 	fi
 
@@ -169,9 +169,9 @@ $(SAXON) :
 # the purpose of the test is for making "make -B" not affect this rule (to speed thing up)
 # can not use $^ because it includes .dependencies-init
 # .maven-modules omitted because it has no additional prerequisites
-.effective-pom.xml : .maven-modules $(POMS) website/target/maven/pom.xml | .maven-init
-	if ! find $@ $(POMS) website/target/maven/pom.xml >/dev/null 2>/dev/null \
-	     || [[ -n $$(find $(POMS) website/target/maven/pom.xml -newer $@ 2>/dev/null) ]]; then \
+.effective-pom.xml : .maven-modules $(POMS) | .maven-init
+	if ! find $@ $(POMS) >/dev/null 2>/dev/null \
+	     || [[ -n $$(find $(POMS) -newer $@ 2>/dev/null) ]]; then \
 		cat $< | while read -r module; do \
 			pom=$$module/pom.xml && \
 			v=$$(xmllint --xpath "/*/*[local-name()='version']/text()" $$pom) && \
@@ -189,7 +189,7 @@ $(SAXON) :
 		touch $@; \
 	fi
 
-.maven-modules : $(POMS) website/target/maven/pom.xml
+.maven-modules : $(POMS)
 	function print_modules_recursively() { \
 		local module=$$1 && \
 		submodules=($$(xmllint --format --xpath "/*/*[local-name()='modules']/*" $$module/pom.xml 2>/dev/null \
@@ -256,7 +256,7 @@ endif
 
 .group-eval : | .maven-init .gradle-init
 
-$(addsuffix /.deps.mk,$(MODULES) website/target/maven) .maven-deps.mk .effective-pom.xml .maven-modules : .dependencies-init
+$(addsuffix /.deps.mk,$(MODULES)) .maven-deps.mk .effective-pom.xml .maven-modules : .dependencies-init
 
 .SECONDARY : .dependencies-init
 .dependencies-init :
