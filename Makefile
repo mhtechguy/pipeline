@@ -22,6 +22,12 @@ EVAL := :
 
 export CURDIR MVN MVN_LOG GRADLE MVN_CACHE MAKE MAKEFLAGS MAKECMDGOALS
 
+# for website
+export MVN_OPTS = --settings '$(CURDIR)/settings.xml' -Dworkspace='$(CURDIR)/$(MVN_WORKSPACE)' -Dcache='$(CURDIR)/$(MVN_CACHE)'
+
+# for cli
+export PIPELINE_CLIENTLIB_PATH = $(CURDIR)/clientlib/go
+
 rwildcard = $(shell find $1 -type f | sed 's/ /\\ /g')
 # does not support spaces in file names:
 #rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
@@ -102,6 +108,11 @@ run-webui : webui/.dependencies
 
 .PHONY : check
 check : $(addprefix check-,$(MODULES))
+
+.PHONY : check-clientlib/go
+check-clientlib/go :
+	cd clientlib/go && \
+	make check
 
 .PHONY : release
 release : assembly/.release
@@ -223,10 +234,10 @@ webui/.deps.mk : webui/build.sbt
 		echo "\$$(error $@ could not be generated)" >$@; \
 	fi
 
-.SECONDARY : cli/.install.zip
-cli/.install.zip : cli/.install
+.SECONDARY : cli/.install-darwin_386.zip
+cli/.install-darwin_386.zip : cli/.install
 
-cli/.install : cli/cli/*.go
+cli/.install : cli/cli/*.go clientlib/go/*.go
 
 updater/cli/.install : updater/cli/*.go
 
@@ -339,8 +350,6 @@ checked :
 website/target/maven/pom.xml : $(addprefix website/src/_data/,modules.yml versions.yml)
 	cd website && \
 	make target/maven/pom.xml
-
-export MVN_OPTS = --settings '$(CURDIR)/settings.xml' -Dworkspace='$(CURDIR)/$(MVN_WORKSPACE)' -Dcache='$(CURDIR)/$(MVN_CACHE)'
 
 website/target/maven/modules : website/target/maven/.deps.mk website/target/maven/.dependencies
 	rm -rf $@
