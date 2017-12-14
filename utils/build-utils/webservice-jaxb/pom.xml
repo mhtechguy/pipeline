@@ -41,6 +41,9 @@
           </instructions>
         </configuration>
       </plugin>
+      <!--
+          FIXME: get RNC files from webservice-utils
+      -->
       <!-- rnc to xsd so we can generate the classes -->
       <plugin>
         <groupId>us.bryon</groupId>

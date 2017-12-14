@@ -1,9 +1,32 @@
 default namespace = "http://www.daisy.org/ns/pipeline/data"
 
-#the nicename inclusion is defined in script element
+# the nicename inclusion is defined in script element
 include "../script/scriptElement.rnc"
 
 include "../base/priority.rnc"
+
+messageAttrs =
+	attribute sequence { xsd:int }
+	& attribute level { message.level }
+	& attribute content { text }
+
+message =
+element message {
+	messageAttrs
+	& message*
+}
+
+progressMessage =
+element message {
+	messageAttrs
+	& attribute portion {
+		xsd:decimal # between 0 and 1
+	}
+	& attribute progress {
+		xsd:decimal # between 0 and 1
+	}
+	& (progressMessage | message)*
+}
 
 job = 
 element job {
@@ -13,44 +36,42 @@ element job {
 
 	& attribute status { job.status }
 
-        & attribute priority{ priority }
-
+	& attribute priority { priority }
 
 	& nicename ?
 
-	& script?
+	& script ?
 
-        & element messages {
-                element message { 
-                        attribute level { message.level }
-                        & attribute sequence { text }
-                        & text
-                }*
-        }?
+	& element messages {
+		attribute progress {
+			xsd:decimal # between 0 and 1
+		}
+		& (progressMessage | message)*
+	} ?
 
 	& element log {
 		attribute href { xsd:anyURI }
-	}?
+	} ?
 
 	& element results {
 		attribute href { xsd:anyURI }
 		& attribute mime-type { text }
 		& result+
-	}?
+	} ?
 }
 
 result= 
 element result{
 	attribute href { xsd:anyURI }
-	& attribute mime-type { text }?
-	& (attribute file { text }) ?
-	& attribute size { xsd:long }?
+	& attribute mime-type { text } ?
+	& attribute file { text } ?
+	& attribute size { xsd:long } ?
 	& ( 	
-			attribute from { text }
-			& attribute name { text }
-			& attribute nicename{ text } 
-	  )?
-		& result*
+		attribute from { text }
+		& attribute name { text }
+		& attribute nicename{ text }
+	) ?
+	& result*
 }
 
 job.status = "IDLE" | "RUNNING" | "DONE" | "ERROR" | "VALIDATION_FAIL"
