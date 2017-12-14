@@ -76,14 +76,14 @@ dist-rpm : assembly/.dependencies | .maven-init
 dist-webui-deb : assembly/.dependencies
 	# see webui README for instructions on how to make a signed package for distribution
 	cd webui && \
-	./activator clean debian:packageBin | $(MVN_LOG)
+	./activator -Dmvn.settings.localRepository="file:$(CURDIR)/$(MVN_WORKSPACE)" clean debian:packageBin | $(MVN_LOG)
 	mv webui/target/*deb .
 
 .PHONY : dist-webui-rpm
 dist-webui-rpm : assembly/.dependencies
 	# see webui README for instructions on how to make a signed package for distribution
 	cd webui && \
-	./activator clean rpm:packageBin
+	./activator -Dmvn.settings.localRepository="file:$(CURDIR)/$(MVN_WORKSPACE)" clean rpm:packageBin
 	mv webui/target/rpm/RPMS/noarch/*.rpm .
 
 .PHONY : run
@@ -95,10 +95,10 @@ run-gui : assembly/target/dev-launcher/bin/pipeline2
 	$< gui
 
 .PHONY : run-webui
-run-webui : # webui/.dependencies
+run-webui : webui/.dependencies
 	if [ ! -d webui/dp2webui ]; then cp -r webui/dp2webui-cleandb webui/dp2webui ; fi
 	cd webui && \
-	./activator run
+	./activator -Dmvn.settings.localRepository="file:$(CURDIR)/$(MVN_WORKSPACE)" run
 
 .PHONY : check
 check : $(addprefix check-,$(MODULES))
@@ -124,7 +124,7 @@ include $(shell find * -name .deps.mk)
 else
 ifneq ($(MAKECMDGOALS), dump-maven-cmd)
 ifneq ($(MAKECMDGOALS), clean-website)
--include $(addsuffix /.deps.mk,$(MODULES) website/target/maven)
+-include $(addsuffix /.deps.mk,$(MODULES) website/target/maven webui)
 endif
 endif
 endif
@@ -217,6 +217,11 @@ $(addsuffix /.deps.mk,$(GRADLE_MODULES)) : $(GRADLE_FILES)
 		echo "\$$(error $@ could not be generated)" >$@; \
 	fi
 endif
+
+webui/.deps.mk : webui/build.sbt
+	if ! bash .make/make-webui-deps.mk.sh >$@; then \
+		echo "\$$(error $@ could not be generated)" >$@; \
+	fi
 
 .SECONDARY : cli/.install.zip
 cli/.install.zip : cli/.install
