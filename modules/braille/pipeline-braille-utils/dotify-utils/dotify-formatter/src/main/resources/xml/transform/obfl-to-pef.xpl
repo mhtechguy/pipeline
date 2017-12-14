@@ -16,9 +16,10 @@
 	<p:import href="../obfl-normalize-space.xpl"/>
 	<p:import href="http://www.daisy.org/pipeline/modules/braille/dotify-utils/library.xpl"/>
 	
-	<pxi:obfl-normalize-space/>
+	<pxi:obfl-normalize-space px:progress=".10"/>
 	
-	<dotify:obfl-to-pef locale="und">
+	<dotify:obfl-to-pef px:progress=".90"
+	                    locale="und">
 		<p:with-option name="mode" select="$text-transform"/>
 		<p:input port="parameters">
 			<p:pipe step="main" port="parameters"/>

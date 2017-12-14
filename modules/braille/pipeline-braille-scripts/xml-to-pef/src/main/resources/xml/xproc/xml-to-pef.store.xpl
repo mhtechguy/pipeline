@@ -32,9 +32,10 @@
     <!-- STORE PEF -->
     <!-- ========= -->
     <p:count/>
-    <p:choose>
+    <p:choose px:progress=".50">
         <p:when test="number(string(/*)) &gt; 0"> <!-- must be 0 or 1 -->
-            <pef:store name="pef-store">
+            <pef:store name="pef-store"
+                       px:message="Storing PEF{if ($include-brf='true') then ', BRF' else ''}{if ($include-preview='true') then ' and HTML preview' else ''}">
                 <p:input port="source">
                     <p:pipe step="main" port="pef"/>
                 </p:input>
@@ -68,21 +69,15 @@
             <p:pipe step="main" port="obfl"/>
         </p:input>
     </p:count>
-    <p:choose>
-        <p:when test="number(string(/*)) &gt; 0"> <!-- must be 0 or 1 -->
+    <p:choose px:progress=".50">
+        <p:when test="number(string(/*)) &gt; 0"
+                px:message="Storing OBFL"> <!-- must be 0 or 1 -->
             <p:store>
-                <p:input port="source">
-                    <p:pipe step="main" port="obfl"/>
-                </p:input>
                 <p:with-option name="href" select="concat($pef-output-dir,'/',$name,'.obfl')"/>
             </p:store>
         </p:when>
         <p:otherwise>
-            <p:sink>
-                <p:input port="source">
-                    <p:empty/>
-                </p:input>
-            </p:sink>
+            <p:sink/>
         </p:otherwise>
     </p:choose>
     
