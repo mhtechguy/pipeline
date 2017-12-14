@@ -112,9 +112,13 @@ public class XProcDecorator {
 		XProcOutput.Builder builder = new XProcOutput.Builder();
 		Iterable<XProcPortInfo> outputInfos=script.getXProcPipelineInfo().getOutputPorts();
 		for(XProcPortInfo info:outputInfos){
-			String parts[] = URITranslatorHelper.getDynamicResultProviderParts(info.getName(),output.getResultProvider(info.getName()),script.getPortMetadata(info.getName()).getMediaType());
-			String prefix = mapper.mapOutput(URI.create(parts[0])).toString();
-			builder.withOutput(info.getName(),new DynamicResultProvider(prefix,parts[1]));
+			String port = info.getName();
+			String mediaType = script.getPortMetadata(port).getMediaType();
+			if ("application/vnd.pipeline.status+xml".equals(mediaType)) {
+				builder.withOutput(port, new StatusResultProvider(port));
+			} else {
+				builder.withOutput(port, new DynamicResultProvider(output.getResultProvider(port), port, mediaType, mapper));
+			}
 		}
 		return builder.build();
 	}

@@ -29,7 +29,8 @@ public class DynamicXProcConfiguration extends XProcConfiguration {
 		public InputStream getInputStream() {
 			return new ByteArrayInputStream((
 				"<configuration xmlns='http://saxon.sf.net/ns/configuration'>" +
-				"   <global expandAttributeDefaults='false'/>" +
+				"   <global expandAttributeDefaults='false'" +
+				"           lineNumbering='false'/>" +
 				"</configuration>\n"
 				).getBytes(StandardCharsets.UTF_8));
 		}
