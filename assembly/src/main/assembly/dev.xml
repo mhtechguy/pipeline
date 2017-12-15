@@ -18,6 +18,7 @@
         <exclude>gui/org.apache.felix.fileinstall-framework-volatile.cfg</exclude>
         <exclude>webservice/org.apache.felix.fileinstall-frontend.cfg</exclude>
         <exclude>webservice/org.apache.felix.fileinstall-framework-persistance.cfg</exclude>
+        <exclude>webservice/org.apache.felix.fileinstall-framework-volatile.cfg</exclude>
       </excludes>
       <outputDirectory>/etc</outputDirectory>
       <filtered>false</filtered>
@@ -51,6 +52,7 @@
       <excludes>
         <exclude>org.apache.felix.fileinstall-frontend.cfg</exclude>
         <exclude>org.apache.felix.fileinstall-framework-persistance.cfg</exclude>
+        <exclude>org.apache.felix.fileinstall-framework-volatile.cfg</exclude>
       </excludes>
       <outputDirectory>/etc/webservice</outputDirectory>
       <filtered>true</filtered>
