@@ -12,7 +12,7 @@
 
   <groupId>org.daisy.libs</groupId>
   <artifactId>saxon-he</artifactId>
-  <version>9.5.1.5-2-SNAPSHOT</version>
+  <version>9.8.0.8-SNAPSHOT</version>
   <packaging>bundle</packaging>
 
   <name>Saxon HE (OSGi Bundle)</name>
@@ -57,7 +57,7 @@
   <properties>
     <lib.groupId>net.sf.saxon</lib.groupId>
     <lib.artifactId>Saxon-HE</lib.artifactId>
-    <lib.version>9.5.1-5</lib.version>
+    <lib.version>9.8.0-8</lib.version>
   </properties>
 
   <dependencies>
@@ -82,6 +82,7 @@
             <Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
             <Main-Class>net.sf.saxon.Transform</Main-Class>
             <Export-Package>
+              !net.sf.saxon.data.*,
               net.sf.saxon.*;version=${project.version}
             </Export-Package>
             <Import-Package>
@@ -89,7 +90,6 @@
               javax.xml.stream.events;version="1.0.1";resolution:=optional,
               javax.xml.xquery;resolution:=optional,
               org.apache.xml.resolver.*;resolution:=optional,
-              com.saxonica.*;resolution:=optional,
               !net.sf.saxon.*,
               *
             </Import-Package>
