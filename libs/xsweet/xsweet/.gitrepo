@@ -7,5 +7,5 @@
 	remote = https://gitlab.coko.foundation/XSweet/XSweet.git
 	branch = master
 	commit = 6d3f878c054bc9aff65076c28b4adec08372e8f7
-	parent = 0f9cd01a70359a6801214c62bedf835f1ee2d521
+	parent = b1b5fc5f3717819fd4d34dc80c544679cefc8dd5
 	cmdver = 0.3.1
