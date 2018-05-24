@@ -26,7 +26,7 @@
             <html xmlns="http://www.w3.org/1999/xhtml">
                 <head>
                     <title>Table of Contents</title>
-                    <base href=".."/>
+                    <base href="{string-join(for $i in 2 to count(tokenize(local:getTocFileUri(@root-rel-uri),'/')) return '..','/')}"/>
                     <style type="text/css">
                         .niv1{
                         border: 1px solid black;
@@ -55,45 +55,64 @@
     </xsl:template>
     
     <xsl:template match="*[starts-with(local-name(), 'by-')]">
-        <div class="niv1" xmlns="http://www.w3.org/1999/xhtml">
-            <details open="open">
-                <xsl:variable name="type" as="xs:string" select="substring(local-name(),4)"/>
-                <summary>Content by <xsl:value-of select="$type"/></summary>
-                <xsl:apply-templates >
-                    <xsl:with-param name="type" select="$type"/>
-                </xsl:apply-templates>
-            </details>
-        </div>
+        <xsl:variable name="type" as="xs:string" select="substring(local-name(),4)"/>
+        <xsl:variable name="non-empty-groups" as="element()*">
+            <xsl:apply-templates>
+                <xsl:with-param name="type" select="$type"/>
+            </xsl:apply-templates>
+        </xsl:variable>
+        <xsl:if test="exists($non-empty-groups)">
+            <div class="niv1" xmlns="http://www.w3.org/1999/xhtml">
+                <details open="open">
+                    <summary>Content by <xsl:value-of select="$type"/></summary>
+                    <xsl:sequence select="$non-empty-groups"/>
+                </details>
+            </div>
+        </xsl:if>
     </xsl:template>
     
     <xsl:template match="group">
         <xsl:param name="type" as="xs:string"/>
-        <div class="niv2" xmlns="http://www.w3.org/1999/xhtml">
-            <details>
-                <summary>
-                    <xsl:variable name="uri" as="xs:string" select="(element[1]/@relUri,@rel-uri)[1]"/>
-                    <xsl:choose>
-                        <xsl:when test="$type eq 'file'">
-                            <xsl:message>local:getDocumentationFileURI(<xsl:value-of select="$uri"/>)-&lt;<xsl:value-of select="local:getDocumentationFileURI($uri)"/></xsl:message>
+        <xsl:variable name="visible-components" as="element()*">
+            <xsl:apply-templates />
+        </xsl:variable>
+        <xsl:if test="exists($visible-components)">
+            <div class="niv2" xmlns="http://www.w3.org/1999/xhtml">
+                <details>
+                    <summary>
+                        <xsl:choose>
+                            <xsl:when test="$type eq 'file'">
+                                <xsl:message>local:getDocumentationFileURI(<xsl:value-of select="@root-rel-uri"/>)-&lt;<xsl:value-of select="local:getDocumentationFileURI(@root-rel-uri)"/></xsl:message>
                                 <xsl:message>
                                     <xsl:copy-of select="."/>
                                 </xsl:message>
-                            <a href="{local:getDocumentationFileURI($uri)}" target="doc"><xsl:value-of select="(@name[normalize-space()],concat('no ',../@label))[1]"/></a>                            
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="(@name[normalize-space()],concat('no ',../@label))[1]"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </summary>
-                <ul><xsl:apply-templates /></ul>
-            </details>
-        </div>
+                                <a href="{local:getDocumentationFileURI(@root-rel-uri)}" target="doc"><xsl:value-of select="@name"/></a>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="(@name[normalize-space()],concat('no ',../@label))[1]"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </summary>
+                    <ul>
+                        <xsl:sequence select="$visible-components"/>
+                    </ul>
+                </details>
+            </div>
+        </xsl:if>
     </xsl:template>
     
-    <xsl:template match="element">
-        <li xmlns="http://www.w3.org/1999/xhtml">
-            <a href="{local:getDocumentationFileURI(@relUri)}#{@id}" target="doc"><xsl:value-of select="(@name,@match)[1]"/></a>
-        </li>
+    <xsl:template match="component">
+        <xsl:variable name="visibility" select="(@visibility,'private')[1]"/>
+        <xsl:variable name="visibility-when-used"
+                      select="if (/data/@type='package')
+                              then if ($visibility=('public','final'))
+                                   then 'private' else 'hidden'
+                              else $visibility"/>
+        <xsl:if test="not($visibility-when-used='hidden')">
+            <li xmlns="http://www.w3.org/1999/xhtml">
+                <a href="{local:getDocumentationFileURI(/data/@root-rel-uri)}#{@id}" target="doc"><xsl:value-of select="(@name,@match)[1]"/></a>
+            </li>
+        </xsl:if>
     </xsl:template>
     
 </xsl:stylesheet>

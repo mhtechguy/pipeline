@@ -7,5 +7,5 @@
 	remote = git@github.com:daisy/xsl-doc.git
 	branch = master
 	commit = 2dada29aa2dd1f5d07e26e4bd77a71dd2efdd518
-	parent = 64cece5eb7859872171da620c5b60b7a75994403
+	parent = 407d9060b706e7155763ca8c84fdfcef26dae6b4
 	cmdver = 0.3.1

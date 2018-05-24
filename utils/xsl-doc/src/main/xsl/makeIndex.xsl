@@ -20,7 +20,8 @@
         <xsl:result-document method="html" indent="yes" encoding="UTF-8" href="{@welcomeOutputUri}" doctype-public="-//W3C//DTD HTML 4.01 Frameset//EN http://www.w3.org/TR/html4/frameset.dtd">
             <html xmlns="http://www.w3.org/1999/xhtml">
                 <head>
-                    <title>Documentation of <xsl:value-of select="@name"/></title>
+                    <title>Documentation of <xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="(@catalog-name,@package-name,@name)[1]"/></title>
+                    <base href="{string-join(for $i in 2 to count(tokenize(local:getWelcomeFileURI(@root-rel-uri),'/')) return '..','/')}"/>
                     <style type="text/css">
                         .niv1{
                         border: 1px solid black;
@@ -42,9 +43,8 @@
                     </style>
                 </head>
                     <frameset cols="25%,75%">
-                        <xsl:variable name="intermediaryDirectory" as="xs:string" select="local:getIntermediaryDirectory(@name)"/>
-                        <frame name="toc" src="{string-join(($intermediaryDirectory,tokenize(@tocOutputUri,'/')[last()]),'/')}"/>
-                        <frame name="doc" src="{string-join(($intermediaryDirectory,tokenize(@htmlOutputUri,'/')[last()]),'/')}"/>
+                        <frame name="toc" src="{local:getTocFileUri(@root-rel-uri)}"/>
+                        <frame name="doc" src="{local:getDocumentationFileURI(@root-rel-uri)}"/>
                     </frameset>
             </html>
         </xsl:result-document>

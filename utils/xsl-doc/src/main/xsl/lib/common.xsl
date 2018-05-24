@@ -24,31 +24,9 @@
     </xd:doc>
     <xsl:function name="local:getDocumentationFileURI" as="xs:string">
         <xsl:param name="relUri" as="xs:string"/>
-        <xsl:variable name="relUriSeq" select="tokenize($relUri,'/')" as="xs:string*"/>
-        <xsl:variable name="sourceFileName" as="xs:string" select="$relUriSeq[last()]"/>
-        <xsl:variable name="intermediaryDirectory" as="xs:string" select="local:getIntermediaryDirectory($sourceFileName)"/>
-        <xsl:variable name="targetFileName" as="xs:string" select="concat(replace($sourceFileName, '\.','_'),'-doc.html')"/>
-        <xsl:variable name="ret" as="xs:string" select="string-join(($relUriSeq[position() &lt; last()],$intermediaryDirectory,$targetFileName),'/')"/>
-        <!--xsl:if test="$_debug">
-            <xsl:message select="concat('documentationFileUri -> ',$ret)"/>
-        </xsl:if-->
-        <xsl:sequence select="$ret"/>
-    </xsl:function>
-    
-    <xd:doc>
-        <xd:desc>Returns the relative URI of target HTML file</xd:desc>
-        <xd:param name="relUri">The XSL relative URI</xd:param>
-        <xd:return>The computed HTML file relative URI</xd:return>
-    </xd:doc>
-    <xsl:function name="local:getIndexFileURI" as="xs:string">
-        <xsl:param name="relUri" as="xs:string"/>
-        <xsl:variable name="relUriSeq" select="tokenize($relUri,'/')" as="xs:string*"/>
-        <xsl:variable name="sourceFileName" as="xs:string" select="$relUriSeq[last()]"/>
-        <xsl:variable name="intermediaryDirectory" as="xs:string" select="local:getIntermediaryDirectory($sourceFileName)"/>
-        <xsl:variable name="targetFileName" as="xs:string" select="concat(replace($sourceFileName, '\.','_'),'-index.html')"/>
-        <xsl:variable name="ret" as="xs:string" select="string-join(($relUriSeq[position() &lt; last()],$intermediaryDirectory,$targetFileName),'/')"/>
+        <xsl:variable name="ret" as="xs:string" select="concat($relUri,'/doc.html')"/>
         <xsl:if test="$_debug">
-            <xsl:message select="concat('indexFileURI -> ',$ret)"/>
+            <xsl:message select="concat('documentationFileUri -> ',$ret)"/>
         </xsl:if>
         <xsl:sequence select="$ret"/>
     </xsl:function>
@@ -60,10 +38,7 @@
     </xd:doc>
     <xsl:function name="local:getWelcomeFileURI" as="xs:string">
         <xsl:param name="relUri" as="xs:string"/>
-        <xsl:variable name="relUriSeq" select="tokenize($relUri,'/')" as="xs:string*"/>
-        <xsl:variable name="sourceFileName" as="xs:string" select="$relUriSeq[last()]"/>
-        <xsl:variable name="targetFileName" as="xs:string" select="concat(replace($sourceFileName, '\..*',''),'.html')"/>
-        <xsl:variable name="ret" as="xs:string" select="string-join(($relUriSeq[position() &lt; last()],$targetFileName),'/')"/>
+        <xsl:variable name="ret" as="xs:string" select="concat($relUri,'.html')"/>
         <xsl:if test="$_debug">
             <xsl:message select="concat('welcomeFileURI -> ',$ret)"/>
         </xsl:if>
@@ -77,33 +52,11 @@
     </xd:doc>
     <xsl:function name="local:getTocFileUri" as="xs:string">
         <xsl:param name="relUri" as="xs:string"/>
-        <xsl:variable name="relUriSeq" select="tokenize($relUri,'/')" as="xs:string*"/>
-        <xsl:variable name="sourceFileName" as="xs:string" select="$relUriSeq[last()]"/>
-        <xsl:variable name="intermediaryDirectory" as="xs:string" select="local:getIntermediaryDirectory($sourceFileName)"/>
-        <xsl:variable name="targetFileName" as="xs:string" select="concat(replace($sourceFileName, '\..*',''),'-toc.html')"/>
-        <xsl:variable name="ret" as="xs:string" select="string-join(($relUriSeq[position() &lt; last()],$intermediaryDirectory,$targetFileName),'/')"/>
+        <xsl:variable name="ret" as="xs:string" select="concat($relUri,'/toc.html')"/>
         <xsl:if test="$_debug">
             <xsl:message select="concat('tocFileUri -> ',$ret)"/>
         </xsl:if>
         <xsl:sequence select="$ret"/>
-    </xsl:function>
-    
-    <xd:doc>
-        <xd:desc>Returns the file name, without extension, preceded by an underscore</xd:desc>
-        <xd:param>The source file name</xd:param>
-        <xd:return>The intermediary directory name</xd:return>
-    </xd:doc>
-    <xsl:function name="local:getIntermediaryDirectory" as="xs:string">
-        <xsl:param name="sourceFileName" as="xs:string"/>
-        <xsl:choose>
-            <xsl:when test="contains($sourceFileName,'/')">
-                <xsl:sequence select="error(QName('top:marchand:xml:local','getIntermediaryDirectory_1'),'Q{top:marchand:xml:local}getIntermediaryDirectory(xs:string) does not accept qualified file names')"/>
-            </xsl:when>
-            <xsl:when test="contains($sourceFileName,'\\')">
-                <xsl:sequence select="error(QName('top:marchand:xml:local','getIntermediaryDirectory_2'),'Q{top:marchand:xml:local}getIntermediaryDirectory(xs:string) does not accept qualified file names')"/>
-            </xsl:when>
-        </xsl:choose>
-        <xsl:sequence select="concat('_',replace($sourceFileName, '\..*',''))"/>
     </xsl:function>
     
     <xd:doc>
@@ -276,5 +229,60 @@
             <xsl:otherwise><xsl:sequence select="0"/></xsl:otherwise>
         </xsl:choose>
     </xsl:function>
+    
+    <xsl:template match="xsl:*" mode="visibility" as="attribute(visibility)?">
+        <xsl:call-template name="visibility">
+            <xsl:with-param name="type" select="local-name()"/>
+            <xsl:with-param name="name" select="@name"/>
+            <xsl:with-param name="declared-visibility" select="@visibility"/>
+            <xsl:with-param name="expose" select="/*/xsl:expose"/>
+        </xsl:call-template>
+    </xsl:template>
+    
+    <xsl:template name="visibility" as="attribute(visibility)?">
+        <xsl:param name="type" as="xs:string" required="yes"/>
+        <xsl:param name="name" as="attribute(name)?"/>
+        <xsl:param name="declared-visibility" as="attribute(visibility)?"/>
+        <xsl:param name="expose" as="element(xsl:expose)*"/>
+        <xsl:choose>
+            <xsl:when test="$type='param'">
+                <xsl:attribute name="visibility" select="'public'"/>
+            </xsl:when>
+            <xsl:when test="$type=('template',
+                                   'function',
+                                   'attribute-set',
+                                   'variable',
+                                   'mode')">
+                <xsl:variable name="expose" as="element(xsl:expose)*" select="$expose[@component=('*',$type)]"/>
+                <xsl:variable name="explicit-exposed-visibility" as="attribute(visibility)*"
+                              select="$expose[$name=tokenize(@names,'\s+')]/@visibility"/>
+                <xsl:choose>
+                    <xsl:when test="$explicit-exposed-visibility">
+                        <xsl:sequence select="$explicit-exposed-visibility[last()]"/>
+                    </xsl:when>
+                    <xsl:when test="$declared-visibility">
+                        <xsl:sequence select="$declared-visibility"/>
+                    </xsl:when>
+                    <xsl:when test="$name">
+                        <xsl:variable name="prefix" as="xs:string?"
+                                      select="if (contains($name,':')) then substring-before($name,':') else ()"/>
+                        <xsl:variable name="local-name" as="xs:string"
+                                      select="if (contains($name,':')) then substring-after($name,':') else $name"/>
+                        <xsl:variable name="exposed-visibility" as="attribute(visibility)?"
+                                      select="$expose[some $name in tokenize(@names,'\s+')
+                                                      satisfies (
+                                                        $name='*'
+                                                        or exists($prefix) and $name=concat($prefix,':*')
+                                                        or $name=concat('*:',$local-name)
+                                                      )]
+                                              /@visibility"/>
+                        <xsl:if test="$exposed-visibility">
+                            <xsl:sequence select="$exposed-visibility"/>
+                        </xsl:if>
+                    </xsl:when>
+                </xsl:choose>
+            </xsl:when>
+        </xsl:choose>
+    </xsl:template>
     
 </xsl:stylesheet>
