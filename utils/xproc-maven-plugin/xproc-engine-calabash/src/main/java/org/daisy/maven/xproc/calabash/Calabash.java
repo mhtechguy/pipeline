@@ -114,6 +114,7 @@ public class Calabash implements XProcEngine {
 		if (!equal(nextCatalogFile, currentCatalogFile) || nextURIResolver != currentURIResolver) {
 			if (nextCatalogFile != null && nextCatalogFile.exists()) {
 				CatalogManager catalogManager = new CatalogManager();
+				// catalogManager.debug.setDebug(5);
 				catalogManager.setCatalogFiles(nextCatalogFile.getPath());
 				currentRuntime.setURIResolver(fallingBackURIResolver(jarURIResolver(), nextURIResolver, new CatalogResolver(catalogManager))); }
 			else
