@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:daisy/xsl-doc.git
+	branch = master
+	commit = 2dada29aa2dd1f5d07e26e4bd77a71dd2efdd518
+	parent = 64cece5eb7859872171da620c5b60b7a75994403
+	cmdver = 0.3.1

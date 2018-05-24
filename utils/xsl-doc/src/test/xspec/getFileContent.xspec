@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<x:description xmlns:x="http://www.jenitennison.com/xslt/xspec"
+    xmlns:local="top:marchand:xml:local"
+    xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    stylesheet="../../main/xsl/getFileContent.xsl" xslt-version="3.0">
+    <x:param name="levelsToKeep" select="'0'"/>
+    <x:scenario label="Scenario for testing template with match 'file'">
+        <x:context>
+            <file dependance-type="first-doc"
+                name="premier.xsl"
+                base-uri="../../test/resources/premier.xsl"/>
+        </x:context>
+        <x:expect label="A file with a template inside">
+            <file dependance-type="first-doc"
+                name="premier.xsl"
+                base-uri="../../test/resources/premier.xsl" levelsToKeep="0">
+                <element 
+                    type="template" 
+                    id="..." 
+                    path="..."
+                    match="/"></element>
+            </file>
+        </x:expect>
+    </x:scenario>
+    
+    <x:scenario label="Scenario for testing extractName function">
+        <x:scenario label="No namespace">
+            <x:call function="local:extractName">
+                <x:param name="name" as="xs:string" select="'toto'"/>
+            </x:call>
+            <x:expect label="two attributes, @name and @namespace" select="_null/@*">
+                <_null name="toto" namespace=""/>
+            </x:expect>
+        </x:scenario>
+        <x:scenario label="local: namespace">
+            <x:call function="local:extractName">
+                <x:param name="name" as="xs:string" select="'local:toto'"/>
+            </x:call>
+            <x:expect label="two attributes, @name and @namespace" select="result/@*">
+                <result name="toto" namespace="top:marchand:xml:local"/>
+            </x:expect>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="Scenario for testing template with match 'xsl:template'">
+        <x:scenario label="without doc">
+            <x:context>
+                <x:param name="xsl-name" select="'no_value'" tunnel="yes"/>
+                <x:param name="base-uri" select="'no_value'" tunnel="yes"/>
+                <x:param name="rel-uri" select="'no_value'" tunnel="yes"/>
+                <xsl:template match="/"/>
+            </x:context>
+            <x:expect label="element type template" >
+                <element type="template" match="/" id="..." path="..."/>
+            </x:expect>
+        </x:scenario>
+        <x:scenario label="with doc">
+            <x:context>
+                <x:param name="xsl-name" select="'no_value'" tunnel="yes"/>
+                <x:param name="base-uri" select="'no_value'" tunnel="yes"/>
+                <x:param name="rel-uri" select="'no_value'" tunnel="yes"/>
+                <xd:doc>
+                    <xd:desc><xd:p>This is the documentation</xd:p></xd:desc>
+                </xd:doc>
+                <xsl:template match="/"/>
+            </x:context>
+            <x:expect label="element type template" >
+                <element type="template" match="/" id="..." path="...">
+                    <xd:doc>
+                        <xd:desc><xd:p>This is the documentation</xd:p></xd:desc>
+                    </xd:doc>
+                </element>
+            </x:expect>
+        </x:scenario>
+    </x:scenario>
+
+    <x:scenario label="Scenario for testing template with match 'xd:*">
+        <x:context>
+            <xd:doc scope="stylesheet">
+                <xd:p>Bla bla bla</xd:p>
+            </xd:doc>
+        </x:context>
+        <x:expect label="empty" test="empty($x:result)"/>
+    </x:scenario>
+
+    <x:scenario label="Scenario for testing template with match 'xsl:param">
+        <x:context>
+            <xsl:param name="p" as="xs:string"/>
+        </x:context>
+        <x:expect label="element type param">
+            <element type="param" name="p" id="..." as="xs:string" namespace="" path="..."/>
+        </x:expect>
+    </x:scenario>
+
+    <x:scenario label="Scenario for testing template with match 'xsl:variable">
+        <x:context>
+            <xsl:variable name="v" as="xs:string" select="'toto'"/>
+        </x:context>
+        <x:expect label="element type variable">
+            <element type="variable" name="v" id="..." as="xs:string" namespace="" select="'toto'" path="..."/>
+        </x:expect>
+    </x:scenario>
+
+    <x:scenario label="Scenario for testing template with match 'xsl:function'">
+        <x:context>
+            <xsl:function name="local:myFunction" as="xs:string" xmlns:local="top:marchand:xml:local">
+                <xsl:param name="p1" as="xs:string"/>
+                <xsl:param name="p2" as="xs:integer*"/>
+                <xsl:param name="p3"/>
+            </xsl:function>
+        </x:context>
+        <x:expect label="element type function">
+            <element type="function" id="..." namespace="top:marchand:xml:local" name="myFunction" as="xs:string" signature="Q{{top:marchand:xml:local}}myFunction(xs:string,xs:integer*,item())"/>
+        </x:expect>
+    </x:scenario>
+
+    <x:scenario label="Scenario for testing template with match 'xsl:strip-space'">
+        <x:context>
+            <xsl:strip-space elements="#all"/>
+        </x:context>
+        <x:expect label="a not null name">
+            <element type="strip-space" id="..." path="..." name="#all" elements="#all"/>
+        </x:expect>
+    </x:scenario>
+
+    <x:scenario label="Scenario for testing template with match 'xsl:preserve-space'">
+        <x:context>
+            <xsl:preserve-space elements="#all"/>
+        </x:context>
+        <x:expect label="a not null name">
+            <element type="preserve-space" id="..." path="..." name="#all" elements="#all"/>
+        </x:expect>
+    </x:scenario>
+</x:description>

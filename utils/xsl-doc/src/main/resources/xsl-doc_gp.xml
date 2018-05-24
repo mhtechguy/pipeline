@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This Source Code Form is subject to the terms of 
+the Mozilla Public License, v. 2.0. If a copy of 
+the MPL was not distributed with this file, You 
+can obtain one at https://mozilla.org/MPL/2.0/.
+-->
+<config xmlns="http://efl.fr/chaine/saxon-pipe/config"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://efl.fr/chaine/saxon-pipe/config gaulois-pipe:/fr/efl/chaine/xslt/schemas/gaulois-pipe_config.xsd">
+    <pipe mutiThreadMaxSourceSize="24349456" nbThreads="1">
+        <xslt href="cp:/get-xfile-dependencies.xsl">
+            <param name="includeContent" value="false"/>
+        </xslt>
+        <xslt href="cp:/getFileContent.xsl"/>
+        <xslt href="cp:/calculateRelativePaths.xsl">
+            <param name="absoluteRootFolder" value="$[absoluteRootFolder]"/>
+        </xslt>
+        <xslt href="cp:/calculateHtmlOutputFile.xsl" id="outputPaths">
+            <param name="outputFolder" value="$[outputFolder]"/>
+        </xslt>
+        <java class="top.marchand.xml.xsl.doc.AccumulatorStep"/>
+        <tee>
+            <pipe>
+                <xslt href="cp:/prepareTOC.xsl" id="prepareToc"/>
+                <xslt href="cp:/makeTOC.xsl">
+                    <param name="outputFolder" value="$[outputFolder]"/>
+                </xslt>
+                <output id="toc">
+                    <null/>
+                </output>
+            </pipe>
+            <pipe>
+                <tee>
+                    <pipe>
+                        <xslt href="cp:/makeDoc.xsl"/>
+                        <output id="terminaison">
+                            <null/>
+                        </output>
+                    </pipe>
+                    <pipe>
+                        <xslt href="cp:/makeIndex.xsl" id="makeIndex" />
+                        <output id="end">
+                            <null/>
+                        </output>
+                    </pipe>
+                </tee>
+            </pipe>
+        </tee>
+    </pipe>
+    <params>
+        <!--param name="sources" value="src/main/xsl"/>
+        <param name="outputFolder" value="should give it via command line"/-->
+        <param name="absoluteRootFolder" value="file:$[basedir]/$[sources]"/>
+    </params>
+    <sources>
+        <folder href="$[sources]" pattern=".*\.xsl" recurse="true"/>
+        <!--folder href="$[sources]" pattern="SuppressionInutilesOM\.xsl" recurse="true"/-->
+    </sources>
+</config>
