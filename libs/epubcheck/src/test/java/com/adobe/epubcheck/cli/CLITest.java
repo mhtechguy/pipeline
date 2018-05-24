@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.junit.Test;
@@ -18,6 +19,8 @@ public class CLITest
   private static String epubPath = "/30/epub/";
   private static String expPath = "/30/expanded/";
   private static String singlePath = "/30/single/";
+
+  private static String epubApiPath = "/com/adobe/epubcheck/test/package/";
 
   @Test
   public void testNPE()
@@ -78,11 +81,29 @@ public class CLITest
   }
 
 	@Test
-	public void testValidExtension1()
+	public void testExtension1()
   {
-		assertEquals(0, run(new String[]{epubPath + "valid/extension-1.ePub"}));
+		assertEquals(0, run(new String[]{epubPath + "invalid/extension-1.ePub"}));
 	}
-	
+
+    @Test
+    public void testExtension2()
+    {
+        assertEquals(0, run(new String[]{epubApiPath + "wrong_extension.zip", "--profile", "default"}));
+    }
+
+    @Test
+    public void testExtension3()
+    {
+        assertEquals(0, run(new String[]{epubApiPath + "wrong_extension_v3.zip", "--profile", "default"}));
+    }
+
+    @Test
+    public void testExtension4()
+    {
+        assertEquals(0, run(new String[]{epubApiPath + "wrong_extension_v3", "--profile", "default"}));
+    }
+
 	@Test
 	public void testOutputXMLCreation()
   {
@@ -183,18 +204,27 @@ public class CLITest
     return run(args, false);
   }
 
-	private String getAbsoluteBasedir(String base)
+  private String getAbsoluteBasedir(String base)
   {
-		URL fileURL = this.getClass().getResource(base);
-		return fileURL!=null?fileURL.getPath():base;
-	}
+	  try {
+		  URL fileURL = this.getClass().getResource(base);
+		  if(fileURL != null) {
+			  String filePath = new File(fileURL.toURI()).getAbsolutePath();
+			  return filePath;
+		  } else {
+			  return base;
+		  }
+	  } catch (URISyntaxException e) {
+		  throw new IllegalStateException("Cannot find test file", e);
+	  }
+  }
 
-	class CountingOutStream extends OutputStream
+  class CountingOutStream extends OutputStream
   {
 		int counts;
 		StringBuilder sb = new StringBuilder();
 		
-		public int getCounts()
+    public int getCounts()
     {
       return counts;
     }

@@ -3,13 +3,13 @@
   "checker" : {
     "path" : "./com/adobe/epubcheck/test/scripts/properties.epub",
     "filename" : "properties.epub",
-    "checkerVersion" : "4.0.0-alpha11-SNAPSHOT",
-    "checkDate" : "09-05-2014 03:16:19",
-    "elapsedTime" : 138,
+    "checkerVersion" : "4.0.3-SNAPSHOT",
+    "checkDate" : "11-27-2017 20:49:01",
+    "elapsedTime" : 125,
     "nFatal" : 0,
     "nError" : 3,
     "nWarning" : 0,
-    "nUsage" : 11
+    "nUsage" : 9
   },
   "publication" : {
     "publisher" : null,
@@ -32,7 +32,7 @@
     "isBackwardCompatible" : false,
     "hasAudio" : false,
     "hasVideo" : false,
-    "charsCount" : 1035,
+    "charsCount" : 1152,
     "embeddedFonts" : [ ],
     "refFonts" : [ ],
     "hasEncryption" : false,
@@ -109,10 +109,10 @@
     "id" : "ncx",
     "fileName" : "OPS/toc.ncx",
     "media_type" : "application/x-dtbncx+xml",
-    "compressedSize" : 303,
-    "uncompressedSize" : 575,
+    "compressedSize" : 401,
+    "uncompressedSize" : 1519,
     "compressionMethod" : "Deflated",
-    "checkSum" : "d22b4cd5479c4e6b2389af1ce3db19314982cda4d81a6f5ec2faf1499bea33",
+    "checkSum" : "9c9dd481b882eaba944f924e8cbc7cea12ba362e8384b21f17eb2f939a5b2b",
     "isSpineItem" : false,
     "spineIndex" : null,
     "isLinear" : false,
@@ -126,7 +126,14 @@
     "renditionLayout" : null,
     "renditionOrientation" : null,
     "renditionSpread" : null,
-    "referencedItems" : [ "OPS/external_script.xhtml" ]
+    "referencedItems" : [
+      "OPS/external_script.xhtml",
+      "OPS/external_script_not_marked.xhtml",
+      "OPS/inline_script.xhtml",
+      "OPS/inline_script_not_marked.xhtml",
+      "OPS/script_tag.xhtml",
+      "OPS/script_tag_not_marked.xhtml"
+    ]
   }, {
     "id" : "page01",
     "fileName" : "OPS/inline_script.xhtml",
@@ -138,7 +145,7 @@
     "isSpineItem" : true,
     "spineIndex" : 0,
     "isLinear" : true,
-    "navigationOrder" : 2,
+    "navigationOrder" : 1,
     "isHTML5" : false,
     "isFixedFormat" : false,
     "isScripted" : false,
@@ -160,7 +167,7 @@
     "isSpineItem" : true,
     "spineIndex" : 1,
     "isLinear" : true,
-    "navigationOrder" : 1,
+    "navigationOrder" : 2,
     "isHTML5" : false,
     "isFixedFormat" : false,
     "isScripted" : true,
@@ -182,7 +189,7 @@
     "isSpineItem" : true,
     "spineIndex" : 2,
     "isLinear" : true,
-    "navigationOrder" : null,
+    "navigationOrder" : 3,
     "isHTML5" : false,
     "isFixedFormat" : false,
     "isScripted" : true,
@@ -204,7 +211,7 @@
     "isSpineItem" : true,
     "spineIndex" : 3,
     "isLinear" : true,
-    "navigationOrder" : null,
+    "navigationOrder" : 4,
     "isHTML5" : false,
     "isFixedFormat" : false,
     "isScripted" : false,
@@ -226,7 +233,7 @@
     "isSpineItem" : true,
     "spineIndex" : 4,
     "isLinear" : true,
-    "navigationOrder" : null,
+    "navigationOrder" : 5,
     "isHTML5" : false,
     "isFixedFormat" : false,
     "isScripted" : true,
@@ -248,7 +255,7 @@
     "isSpineItem" : true,
     "spineIndex" : 5,
     "isLinear" : true,
-    "navigationOrder" : null,
+    "navigationOrder" : 6,
     "isHTML5" : false,
     "isFixedFormat" : false,
     "isScripted" : true,
@@ -285,10 +292,10 @@
     "id" : "toc",
     "fileName" : "OPS/toc.xhtml",
     "media_type" : "application/xhtml+xml",
-    "compressedSize" : 252,
-    "uncompressedSize" : 422,
+    "compressedSize" : 303,
+    "uncompressedSize" : 740,
     "compressionMethod" : "Deflated",
-    "checkSum" : "f7f393288393b534e897f6e0fd91111774fee263ff5e795916c10cc4de4bc5d",
+    "checkSum" : "2823d0e64e41635acf648ca1da52024895b2f1baf0c337d8cd17514b251eb6",
     "isSpineItem" : false,
     "spineIndex" : null,
     "isLinear" : false,
@@ -302,7 +309,14 @@
     "renditionLayout" : null,
     "renditionOrientation" : null,
     "renditionSpread" : null,
-    "referencedItems" : [ "OPS/external_script.xhtml", "OPS/inline_script.xhtml" ]
+    "referencedItems" : [
+      "OPS/external_script.xhtml",
+      "OPS/external_script_not_marked.xhtml",
+      "OPS/inline_script.xhtml",
+      "OPS/inline_script_not_marked.xhtml",
+      "OPS/script_tag.xhtml",
+      "OPS/script_tag_not_marked.xhtml"
+    ]
   } ],
   "messages" : [ {
     "ID" : "ACC-002",
@@ -359,7 +373,7 @@
     "message" : "Navigation Document has no 'landmarks nav' element.",
     "additionalLocations" : 0,
     "locations" : [ {
-      "path" : "properties.epub",
+      "path" : "OPS/toc.xhtml",
       "line" : -1,
       "column" : -1,
       "context" : null
@@ -429,68 +443,9 @@
     } ],
     "suggestion" : null
   }, {
-    "ID" : "OPF-058",
-    "severity" : "USAGE",
-    "message" : "Spine item has no TOC entry reference.",
-    "additionalLocations" : 0,
-    "locations" : [ {
-      "path" : "OPS/toc.xhtml",
-      "line" : -1,
-      "column" : -1,
-      "context" : "OPS/external_script_not_marked.xhtml"
-    }, {
-      "path" : "OPS/toc.xhtml",
-      "line" : -1,
-      "column" : -1,
-      "context" : "OPS/inline_script_not_marked.xhtml"
-    }, {
-      "path" : "OPS/toc.xhtml",
-      "line" : -1,
-      "column" : -1,
-      "context" : "OPS/script_tag.xhtml"
-    }, {
-      "path" : "OPS/toc.xhtml",
-      "line" : -1,
-      "column" : -1,
-      "context" : "OPS/script_tag_not_marked.xhtml"
-    } ],
-    "suggestion" : "Every spine item in the manifest should be referenced by at least one TOC entry."
-  }, {
-    "ID" : "OPF-059",
-    "severity" : "USAGE",
-    "message" : "Spine item has no NCX entry reference.",
-    "additionalLocations" : 0,
-    "locations" : [ {
-      "path" : "OPS/toc.ncx",
-      "line" : -1,
-      "column" : -1,
-      "context" : "OPS/external_script_not_marked.xhtml"
-    }, {
-      "path" : "OPS/toc.ncx",
-      "line" : -1,
-      "column" : -1,
-      "context" : "OPS/inline_script.xhtml"
-    }, {
-      "path" : "OPS/toc.ncx",
-      "line" : -1,
-      "column" : -1,
-      "context" : "OPS/inline_script_not_marked.xhtml"
-    }, {
-      "path" : "OPS/toc.ncx",
-      "line" : -1,
-      "column" : -1,
-      "context" : "OPS/script_tag.xhtml"
-    }, {
-      "path" : "OPS/toc.ncx",
-      "line" : -1,
-      "column" : -1,
-      "context" : "OPS/script_tag_not_marked.xhtml"
-    } ],
-    "suggestion" : "Every spine item in the manifest should be referenced by at least one NCX entry."
-  }, {
     "ID" : "RSC-005",
     "severity" : "ERROR",
-    "message" : "Error while parsing file 'The for attribute does not refer to an allowed target element (expecting: button|keygen|meter|output|progress|select|textarea|input[not(@type='hidden')]).'.",
+    "message" : "Error while parsing file: The for attribute does not refer to an allowed target element (expecting: button|keygen|meter|output|progress|select|textarea|input[not(@type='hidden')]).",
     "additionalLocations" : 0,
     "locations" : [ {
       "path" : "OPS/inline_script.xhtml",

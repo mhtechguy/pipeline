@@ -27,14 +27,16 @@ public class XmlReportImpl extends XmlReportAbstract
     try
     {
       setNamespace("http://hul.harvard.edu/ois/xml/ns/jhove");
+      addPrefixNamespace("xsi","http://www.w3.org/2001/XMLSchema-instance");
 	  List<KeyValue<String, String>> attrs = new ArrayList<KeyValue<String, String>>();
 	  attrs.add(KeyValue.with("name", epubCheckName));
 	  attrs.add(KeyValue.with("release", epubCheckVersion)); 
 	  attrs.add(KeyValue.with("date", epubCheckDate));
+	  attrs.add(KeyValue.with("xsi:schemaLocation", "http://hul.harvard.edu/ois/xml/ns/jhove http://hul.harvard.edu/ois/xml/xsd/jhove/jhove.xsd"));
 	  startElement("jhove", attrs);
 
 	  generateElement("date", generationDate);
-	  startElement("repInfo", KeyValue.with("uri", getNameFromPath(getEpubFileName())));
+	  startElement("repInfo", KeyValue.with("uri", getEpubFileName()));
       generateElement("created", creationDate);
       generateElement("lastModified", lastModifiedDate);
       if (formatName == null) {
@@ -108,6 +110,7 @@ public class XmlReportImpl extends XmlReportAbstract
       generateElement("mimeType", formatName);
       startElement("properties");
 
+      generateProperty("FileName", getNameFromPath(getEpubFileName()), "String");
       generateProperty("PageCount", pagesCount);
       generateProperty("CharacterCount", charsCount);
       generateProperty("Language", language, "String");
@@ -162,7 +165,7 @@ public class XmlReportImpl extends XmlReportAbstract
           generateElement("name", "Font");
           startElement("values", KeyValue.with("arity", "List"), KeyValue.with("type", "Property"));
           generateProperty("FontName", getNameFromPath(f), "String");
-          generateProperty("FontFile", false);
+          generateProperty("FontFile", true);
           endElement("values");
           endElement("property");
         }

@@ -7,5 +7,5 @@
 	remote = git@github.com:daisy/epubcheck.git
 	branch = master
 	commit = dc9637e80a46ff8f50216278b9e38eb73cadadca
-	parent = ece1aaab9e858637c432faa0717e5bf94c43e21e
+	parent = fc908d42b936b089b78c6c6075868ef48f89b82b
 	cmdver = 0.3.1

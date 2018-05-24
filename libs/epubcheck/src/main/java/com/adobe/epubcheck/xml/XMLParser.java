@@ -333,7 +333,8 @@ public class XMLParser extends DefaultHandler implements LexicalHandler, DeclHan
     else
     {
       report.message(MessageId.RSC_005,
-          EPUBLocation.create(path, ex.getLineNumber(), ex.getColumnNumber()), message);
+          EPUBLocation.create(path, ex.getLineNumber(), ex.getColumnNumber()),
+          message);
     }
   }
 
@@ -341,14 +342,16 @@ public class XMLParser extends DefaultHandler implements LexicalHandler, DeclHan
     throws SAXException
   {
     report.message(MessageId.RSC_016,
-        EPUBLocation.create(path, ex.getLineNumber(), ex.getColumnNumber()), ex.getMessage());
+        EPUBLocation.create(path, ex.getLineNumber(), ex.getColumnNumber()),
+        ex.getMessage());
   }
 
   public void warning(SAXParseException ex)
     throws SAXException
   {
     report.message(MessageId.RSC_017,
-        EPUBLocation.create(path, ex.getLineNumber(), ex.getColumnNumber()), ex.getMessage());
+        EPUBLocation.create(path, ex.getLineNumber(), ex.getColumnNumber()),
+        ex.getMessage());
   }
 
   public void characters(char[] arg0, int arg1, int arg2)
@@ -1005,7 +1008,7 @@ public class XMLParser extends DefaultHandler implements LexicalHandler, DeclHan
     // 2.0 dtd, probably never published
     map.put("http://www.idpf.org/dtds/2007/opf.dtd",
         ResourceUtil.getResourcePath("schema/20/dtd/opf20.dtd"));
-    // xhtml 1.1
+    // xhtml 1.0
     map.put("http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd",
         ResourceUtil.getResourcePath("schema/20/dtd/xhtml1-transitional.dtd"));
     map.put("http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd",

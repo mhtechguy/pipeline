@@ -1,15 +1,15 @@
 {
   "customMessageFileName" : null,
   "checker" : {
-    "path" : "./target/test-classes/com/adobe/epubcheck/test/toc/fragments.epub",
+    "path" : "./com/adobe/epubcheck/test/toc/fragments.epub",
     "filename" : "fragments.epub",
-    "checkerVersion" : "4.0.0-alpha12-SNAPSHOT",
-    "checkDate" : "03-25-2015 10:06:36",
-    "elapsedTime" : 46,
+    "checkerVersion" : "4.0.3-SNAPSHOT",
+    "checkDate" : "11-27-2017 20:49:02",
+    "elapsedTime" : 86,
     "nFatal" : 0,
     "nError" : 0,
     "nWarning" : 0,
-    "nUsage" : 4
+    "nUsage" : 3
   },
   "publication" : {
     "publisher" : null,
@@ -109,10 +109,10 @@
     "id" : "ncx",
     "fileName" : "OPS/toc.ncx",
     "media_type" : "application/x-dtbncx+xml",
-    "compressedSize" : 293,
-    "uncompressedSize" : 556,
+    "compressedSize" : 310,
+    "uncompressedSize" : 717,
     "compressionMethod" : "Deflated",
-    "checkSum" : "7e983f3695b1eea13cb6d3e7aacb5d84de767f2ccda456f5154d35c5f9b012",
+    "checkSum" : "e4dd863fcca373e09319a92468468b796b2cbc76b3bcd82764440696b3d",
     "isSpineItem" : false,
     "spineIndex" : null,
     "isLinear" : false,
@@ -126,7 +126,7 @@
     "renditionLayout" : null,
     "renditionOrientation" : null,
     "renditionSpread" : null,
-    "referencedItems" : [ "OPS/page01.xhtml" ]
+    "referencedItems" : [ "OPS/page01.xhtml", "OPS/page02.xhtml" ]
   }, {
     "id" : "page01",
     "fileName" : "OPS/page01.xhtml",
@@ -217,7 +217,7 @@
     "message" : "Navigation Document has no 'landmarks nav' element.",
     "additionalLocations" : 0,
     "locations" : [ {
-      "path" : "fragments.epub",
+      "path" : "OPS/toc.xhtml",
       "line" : -1,
       "column" : -1,
       "context" : null
@@ -235,17 +235,5 @@
       "context" : ""
     } ],
     "suggestion" : null
-  }, {
-    "ID" : "OPF-059",
-    "severity" : "USAGE",
-    "message" : "Spine item has no NCX entry reference.",
-    "additionalLocations" : 0,
-    "locations" : [ {
-      "path" : "OPS/toc.ncx",
-      "line" : -1,
-      "column" : -1,
-      "context" : "OPS/page02.xhtml"
-    } ],
-    "suggestion" : "Every spine item in the manifest should be referenced by at least one NCX entry."
   } ]
 }

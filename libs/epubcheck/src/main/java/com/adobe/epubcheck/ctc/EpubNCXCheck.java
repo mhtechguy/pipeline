@@ -23,6 +23,13 @@ import com.adobe.epubcheck.util.EpubConstants;
 import com.adobe.epubcheck.util.FeatureEnum;
 import com.adobe.epubcheck.util.PathUtil;
 
+/**
+ *  ===  WARNING  ==========================================<br/>
+ *  This class is scheduled to be refactored and integrated<br/>
+ *  in another package.<br/>
+ *  Please keep changes minimal (bug fixes only) until then.<br/>
+ *  ========================================================<br/>
+ */
 public class EpubNCXCheck implements DocumentValidator
 {
   private final XmlDocParser docParser;
@@ -173,7 +180,7 @@ public class EpubNCXCheck implements DocumentValidator
 
             if (path != null && !path.equals(tocFileName) && !path.equals(navDocEntry) && !tocLinkSet.contains(path))
             {
-              report.message(MessageId.OPF_059, EPUBLocation.create(navDocEntry, path));
+              report.message(MessageId.OPF_059, EPUBLocation.create(navDocEntry, path), si.getIdref());
             }
           }
           else

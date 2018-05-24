@@ -22,6 +22,13 @@ import com.adobe.epubcheck.util.EPUBVersion;
 import com.adobe.epubcheck.util.EpubConstants;
 import com.adobe.epubcheck.util.NamespaceHelper;
 
+/**
+ *  ===  WARNING  ==========================================<br/>
+ *  This class is scheduled to be refactored and integrated<br/>
+ *  in another package.<br/>
+ *  Please keep changes minimal (bug fixes only) until then.<br/>
+ *  ========================================================<br/>
+ */
 public class HTMLTagsAnalyseHandler extends DefaultHandler
 {
   private String fileName;
@@ -303,8 +310,9 @@ public class HTMLTagsAnalyseHandler extends DefaultHandler
     }
     else if ("nav".compareTo(tagName) == 0)
     {
-      String type = attributes.getValue(EpubConstants.EpubTypeNamespaceUri, "type");
-      if (type != null && "landmark".compareToIgnoreCase(type) == 0)
+      String epubPrefix = namespaceHelper.findPrefixForUri(EpubConstants.EpubTypeNamespaceUri);
+      String type = attributes.getValue(epubPrefix+":type");
+      if (type != null && "landmarks".compareToIgnoreCase(type) == 0)
       {
         ++landmarkNavCount;
       }

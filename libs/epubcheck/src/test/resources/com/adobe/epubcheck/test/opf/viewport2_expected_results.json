@@ -1,11 +1,11 @@
 {
   "customMessageFileName" : null,
   "checker" : {
-    "path" : "./target/test-classes/com/adobe/epubcheck/test/opf/viewport2.epub",
+    "path" : "./com/adobe/epubcheck/test/opf/viewport2.epub",
     "filename" : "viewport2.epub",
-    "checkerVersion" : "4.0.0-alpha12-SNAPSHOT",
-    "checkDate" : "03-25-2015 10:19:17",
-    "elapsedTime" : 90,
+    "checkerVersion" : "4.0.3-SNAPSHOT",
+    "checkDate" : "12-31-2016 01:12:02",
+    "elapsedTime" : 41,
     "nFatal" : 0,
     "nError" : 2,
     "nWarning" : 0,
@@ -109,10 +109,10 @@
     "id" : "ncx",
     "fileName" : "OPS/toc.ncx",
     "media_type" : "application/x-dtbncx+xml",
-    "compressedSize" : 354,
-    "uncompressedSize" : 1206,
+    "compressedSize" : 357,
+    "uncompressedSize" : 1224,
     "compressionMethod" : "Deflated",
-    "checkSum" : "431f6353c0b5fd84b73a6b2514301c4d60b3d143d4b44e625a384d52edce15",
+    "checkSum" : "c4644df1b277f6375465762575b7ff1ebbabd14ebc0a78c967fdd97b1d9dfe8",
     "isSpineItem" : false,
     "spineIndex" : null,
     "isLinear" : false,
@@ -271,7 +271,7 @@
     "message" : "Navigation Document has no 'landmarks nav' element.",
     "additionalLocations" : 0,
     "locations" : [ {
-      "path" : "viewport2.epub",
+      "path" : "OPS/toc.xhtml",
       "line" : -1,
       "column" : -1,
       "context" : null

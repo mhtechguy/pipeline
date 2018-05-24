@@ -55,6 +55,7 @@ public enum MessageId implements Comparable<MessageId>
   CHK_005("CHK-005"),
   CHK_006("CHK-006"),
   CHK_007("CHK-007"),
+  CHK_008("CHK-008"),
 
   // Messages associated with styles
   CSS_001("CSS-001"),
@@ -126,6 +127,7 @@ public enum MessageId implements Comparable<MessageId>
   HTM_050("HTM-050"),
   HTM_051("HTM-051"),
   HTM_052("HTM-052"),
+  HTM_053("HTM_053"),
 
   // Messages associated with media (images, audio and video)
   MED_001("MED-001"),
@@ -267,6 +269,7 @@ public enum MessageId implements Comparable<MessageId>
   PKG_021("PKG-021"),
   PKG_022("PKG-022"),
   PKG_023("PKG-023"),
+  PKG_024("PKG-024"),
 
   // Messages relating to resources
   RSC_001("RSC-001"),
@@ -292,6 +295,7 @@ public enum MessageId implements Comparable<MessageId>
   RSC_020("RSC-020"),
   RSC_021("RSC-021"),
   RSC_022("RSC-022"),
+  RSC_023("RSC-023"),
 
   // Messages relating to scripting
   SCP_001("SCP-001"),

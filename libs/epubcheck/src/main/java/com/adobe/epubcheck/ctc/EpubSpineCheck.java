@@ -14,6 +14,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ *  ===  WARNING  ==========================================<br/>
+ *  This class is scheduled to be refactored and integrated<br/>
+ *  in another package.<br/>
+ *  Please keep changes minimal (bug fixes only) until then.<br/>
+ *  ========================================================<br/>
+ */
 public class EpubSpineCheck implements DocumentValidator
 {
   private static final int MAX_SPINE_ITEM_THRESHOLD = 100;
@@ -70,11 +77,14 @@ public class EpubSpineCheck implements DocumentValidator
       {
         if (e.getName().equals("meta"))
         {
-          String val = e.getAttribute("property");
+          String prop = e.getAttribute("property");
+          if (prop != null && prop.equalsIgnoreCase("rendition:layout"))
           {
-            if (val != null && val.equalsIgnoreCase("rendition:layout"))
+            // #727 NPE guard
+            String val = e.getValue();
+            if (val != null && val.equalsIgnoreCase("pre-paginated"))
             {
-              isFixedFormat = e.getValue().equalsIgnoreCase("pre-paginated");
+              isFixedFormat = true;
               break;
             }
           }

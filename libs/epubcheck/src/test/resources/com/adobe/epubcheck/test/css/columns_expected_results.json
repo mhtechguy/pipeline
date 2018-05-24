@@ -1,15 +1,15 @@
 {
   "customMessageFileName" : null,
   "checker" : {
-    "path" : "./target/test-classes/com/adobe/epubcheck/test/css/columns.epub",
+    "path" : "./com/adobe/epubcheck/test/css/columns.epub",
     "filename" : "columns.epub",
-    "checkerVersion" : "4.0.0-alpha12-SNAPSHOT",
-    "checkDate" : "03-25-2015 10:06:37",
-    "elapsedTime" : 44,
+    "checkerVersion" : "4.0.3-SNAPSHOT",
+    "checkDate" : "11-26-2017 23:10:30",
+    "elapsedTime" : 115,
     "nFatal" : 0,
     "nError" : 0,
     "nWarning" : 0,
-    "nUsage" : 8
+    "nUsage" : 7
   },
   "publication" : {
     "publisher" : null,
@@ -109,10 +109,10 @@
     "id" : "ncx",
     "fileName" : "OPS/toc.ncx",
     "media_type" : "application/x-dtbncx+xml",
-    "compressedSize" : 297,
-    "uncompressedSize" : 558,
+    "compressedSize" : 361,
+    "uncompressedSize" : 891,
     "compressionMethod" : "Deflated",
-    "checkSum" : "4a146596d7b5a59229912fb4a5921360a4108643436dfe1164f87836e89d10de",
+    "checkSum" : "29b383652aba205ea3583c9acc77903e57fed395843528d774a240eb8acb7244",
     "isSpineItem" : false,
     "spineIndex" : null,
     "isLinear" : false,
@@ -126,7 +126,7 @@
     "renditionLayout" : null,
     "renditionOrientation" : null,
     "renditionSpread" : null,
-    "referencedItems" : [ "OPS/external_css.xhtml" ]
+    "referencedItems" : [ "OPS/external_css.xhtml", "OPS/inline_css.xhtml", "OPS/style_tag_css.xhtml" ]
   }, {
     "id" : "page01",
     "fileName" : "OPS/external_css.xhtml",
@@ -266,7 +266,7 @@
     "message" : "Navigation Document has no 'landmarks nav' element.",
     "additionalLocations" : 0,
     "locations" : [ {
-      "path" : "columns.epub",
+      "path" : "OPS/toc.xhtml",
       "line" : -1,
       "column" : -1,
       "context" : null
@@ -372,22 +372,5 @@
       "context" : "b"
     } ],
     "suggestion" : "CSS styles are usually more appropriate for italics or bold text."
-  }, {
-    "ID" : "OPF-059",
-    "severity" : "USAGE",
-    "message" : "Spine item has no NCX entry reference.",
-    "additionalLocations" : 0,
-    "locations" : [ {
-      "path" : "OPS/toc.ncx",
-      "line" : -1,
-      "column" : -1,
-      "context" : "OPS/inline_css.xhtml"
-    }, {
-      "path" : "OPS/toc.ncx",
-      "line" : -1,
-      "column" : -1,
-      "context" : "OPS/style_tag_css.xhtml"
-    } ],
-    "suggestion" : "Every spine item in the manifest should be referenced by at least one NCX entry."
   } ]
 }

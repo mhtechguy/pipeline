@@ -46,6 +46,13 @@ public class Epub20CheckTest extends AbstractEpubCheckTest
   }
 
   @Test
+  public void testValidateEPUBvalid20WithProfile()
+  {
+    EPUBProfile profile = EPUBProfile.DICT;
+    testValidateDocument("valid/lorem.epub", profile);
+  }
+
+  @Test
   public void testValidateEPUBInvalid20()
   {
     Collections.addAll(expectedErrors, MessageId.PKG_007);
@@ -62,8 +69,7 @@ public class Epub20CheckTest extends AbstractEpubCheckTest
   @Test
   public void testValidateEPUBNoUniqueId20()
   {
-    Collections.addAll(expectedErrors, MessageId.RSC_005, MessageId.OPF_030);
-    Collections.addAll(expectedWarnings, MessageId.OPF_055);
+    Collections.addAll(expectedErrors, MessageId.OPF_030);
     testValidateDocument("OPFIllegalElement_UniqueID20.epub");
   }
 
@@ -71,14 +77,13 @@ public class Epub20CheckTest extends AbstractEpubCheckTest
   public void testValidateEPUBOPFIllegalElement20()
   {
     Collections.addAll(expectedErrors, MessageId.RSC_005);
-    Collections.addAll(expectedWarnings, MessageId.OPF_055);
     testValidateDocument("OPFIllegalElement20.epub");
   }
 
   @Test
   public void testValidateEPUBUnmanifested20()
   {
-    Collections.addAll(expectedWarnings, MessageId.OPF_055, MessageId.OPF_003, MessageId.OPF_003);
+    Collections.addAll(expectedWarnings, MessageId.OPF_003, MessageId.OPF_003);
     testValidateDocument("Unmanifested20.epub");
   }
 
@@ -98,7 +103,6 @@ public class Epub20CheckTest extends AbstractEpubCheckTest
   public void testValidateEPUBNullDate20()
   {
     Collections.addAll(expectedErrors, MessageId.OPF_054);
-    Collections.addAll(expectedWarnings, MessageId.OPF_055);
     testValidateDocument("NullDate20.epub");
   }
 
@@ -106,7 +110,6 @@ public class Epub20CheckTest extends AbstractEpubCheckTest
   public void testValidateEPUBNon8601Date20()
   {
     Collections.addAll(expectedErrors, MessageId.OPF_054);
-    Collections.addAll(expectedWarnings, MessageId.OPF_055);
     testValidateDocument("Non8601Date20.epub");
   }
 
@@ -114,21 +117,19 @@ public class Epub20CheckTest extends AbstractEpubCheckTest
   public void testValidateEPUBUnmanifestedGuideItems20()
   {
     Collections.addAll(expectedErrors, MessageId.OPF_031, MessageId.RSC_007);
-    Collections.addAll(expectedWarnings, MessageId.OPF_055);
     testValidateDocument("UnmanifestedGuideItems20.epub");
   }
 
   @Test
   public void testValidateEPUBEmptyDir20()
   {
-    Collections.addAll(expectedWarnings, MessageId.OPF_055, MessageId.PKG_014);
+    Collections.addAll(expectedWarnings, MessageId.PKG_014);
     testValidateDocument("EmptyDir20.epub");
   }
 
   @Test
   public void testValidateEPUBPvalid20()
   {
-    Collections.addAll(expectedWarnings, MessageId.OPF_055);
     testValidateDocument("Test20.epub");
   }
 
@@ -178,8 +179,8 @@ public class Epub20CheckTest extends AbstractEpubCheckTest
   @Test
   public void testValidateEPUB_issue138()
   {
-    Collections.addAll(expectedWarnings, MessageId.OPF_055);
     //warning for empty dc:title
+    Collections.addAll(expectedWarnings, MessageId.OPF_055);
     testValidateDocument("/invalid/issue138.epub");
   }
 
@@ -203,15 +204,15 @@ public class Epub20CheckTest extends AbstractEpubCheckTest
     testValidateDocument("valid/issue169.epub", "valid/issue169.txt");
   }
 
-  @Test // STA - This test LOCKS UP!!!!
-  public void testValidateEPUBvalidIssue194_1()
+  @Test
+  public void testValidateEPUBinvalidIssue194()
   {
     Collections.addAll(expectedErrors, MessageId.HTM_009);
-    testValidateDocument("valid/issue194.bad.epub");
+    testValidateDocument("invalid/issue194.bad.epub");
   }
 
   @Test
-  public void testValidateEPUBvalidIssue194_2()
+  public void testValidateEPUBvalidIssue194()
   {
     testValidateDocument("valid/issue194.good.epub");
   }
@@ -265,4 +266,11 @@ public class Epub20CheckTest extends AbstractEpubCheckTest
 	  Collections.addAll(expectedErrors, MessageId.RSC_007);
     testValidateDocument("invalid/issue316.epub");
 	}
+
+  @Test
+  public void testValidateEPUB_issue21()
+  {
+    Collections.addAll(expectedErrors, MessageId.OPF_050, MessageId.CHK_008);
+    testValidateDocument("/Issue21.epub");
+  }
 }

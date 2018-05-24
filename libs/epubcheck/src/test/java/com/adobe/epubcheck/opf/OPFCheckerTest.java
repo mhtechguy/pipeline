@@ -24,6 +24,8 @@ package com.adobe.epubcheck.opf;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
@@ -73,7 +75,7 @@ public class OPFCheckerTest
         String.format(Messages.get("single_file"), "opf", version.toString(),
             profile == null ? EPUBProfile.DEFAULT : profile));
 
-    GenericResourceProvider resourceProvider;
+    GenericResourceProvider resourceProvider = null;
     if (fileName.startsWith("http://") || fileName.startsWith("https://"))
     {
       resourceProvider = new URLResourceProvider(fileName);
@@ -89,9 +91,13 @@ public class OPFCheckerTest
       {
         basepath = "/30/single/opf/";
       }
-      URL fileURL = this.getClass().getResource(basepath + fileName);
-      String filePath = fileURL != null ? fileURL.getPath() : basepath + fileName;
-      resourceProvider = new FileResourceProvider(filePath);
+      try {
+        URL fileURL = this.getClass().getResource(basepath + fileName);
+        String filePath = fileURL != null ? new File(fileURL.toURI()).getAbsolutePath() : basepath + fileName;
+        resourceProvider = new FileResourceProvider(filePath);
+      } catch (URISyntaxException e) {
+        throw new IllegalStateException("Cannot find test file", e);
+      }
     }
 
     OPFChecker opfChecker = OPFCheckerFactory.getInstance()
@@ -516,6 +522,13 @@ public class OPFCheckerTest
   }
 
   @Test
+  public void testEmptyGuideElementIssue663_EPUB2()
+  {
+    Collections.addAll(expectedErrors, MessageId.RSC_005);
+    testValidateDocument("invalid/issue663_empty-guide.opf", EPUBVersion.VERSION_2);
+  }
+
+  @Test
   public void testFilenameInManifestContainsSpacesIssue239_EPUB2()
   {
     Collections.addAll(expectedWarnings, MessageId.PKG_010);
@@ -830,6 +843,20 @@ public class OPFCheckerTest
   {
     Collections.addAll(expectedErrors, MessageId.OPF_071, MessageId.OPF_071);
     testValidateDocument("invalid/idx-collection-resource-noxhtml.opf", EPUBVersion.VERSION_3);
+  }
+
+  @Test
+  public void testGuideReferenceUnique_EPUB2()
+  {
+    Collections.addAll(expectedWarnings, MessageId.RSC_017, MessageId.RSC_017);
+    testValidateDocument("invalid/guide-duplicates.opf", EPUBVersion.VERSION_2);
+  }
+
+  @Test
+  public void testGuideReferenceUnique_EPUB3()
+  {
+    Collections.addAll(expectedWarnings, MessageId.RSC_017, MessageId.RSC_017);
+    testValidateDocument("invalid/guide-duplicates.opf", EPUBVersion.VERSION_3);
   }
 
   @Test

@@ -1,6 +1,5 @@
 package com.adobe.epubcheck.ctc;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
@@ -25,6 +24,13 @@ import com.adobe.epubcheck.util.FeatureEnum;
 import com.adobe.epubcheck.util.SearchDictionary;
 import com.adobe.epubcheck.util.SearchDictionary.DictionaryType;
 
+/**
+ *  ===  WARNING  ==========================================<br/>
+ *  This class is scheduled to be refactored and integrated<br/>
+ *  in another package.<br/>
+ *  Please keep changes minimal (bug fixes only) until then.<br/>
+ *  ========================================================<br/>
+ */
 public class EpubHTML5StructureCheck implements DocumentValidator
 {
   static final int hasHtml = 1;
@@ -52,7 +58,6 @@ public class EpubHTML5StructureCheck implements DocumentValidator
   {
     boolean result = false;
     SearchDictionary vtsd = new SearchDictionary(DictionaryType.VALID_TEXT_MEDIA_TYPES);
-    int landmarkNavCount = 0;
     boolean isGlobalFixed = EpubPackage.isGlobalFixed(this.epubPackage);
 
     Hashtable<String, SpineItem> spineItems = new Hashtable<String, SpineItem>();
@@ -147,13 +152,7 @@ public class EpubHTML5StructureCheck implements DocumentValidator
             report.info(null, FeatureEnum.HAS_HTML5, "true");
           }
         }
-        landmarkNavCount += sh.getLandmarkNavCount();
       }
-    }
-    if (landmarkNavCount != 1 && epubPackage.getVersion() == EPUBVersion.VERSION_3)
-    {
-      File zipFile = new File(zip.getName());
-      report.message(MessageId.ACC_008, EPUBLocation.create(zipFile.getName()));
     }
 
     return result;

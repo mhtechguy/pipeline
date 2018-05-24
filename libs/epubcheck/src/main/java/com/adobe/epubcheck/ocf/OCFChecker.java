@@ -209,6 +209,7 @@ public class OCFChecker
     {
       // Validation profile is unsupported for EPUB 2.0
       report.message(MessageId.PKG_023, EPUBLocation.create(opfPaths.get(0)));
+      validationProfile = EPUBProfile.DEFAULT;
     }
     else if (validationVersion == EPUBVersion.VERSION_3)
     {
@@ -307,9 +308,11 @@ public class OCFChecker
     //
     try
     {
+      // report duplicate entries
       Set<String> entriesSet = new HashSet<String>();
       Set<String> normalizedEntriesSet = new HashSet<String>();
-      for (final String entry : ocf.getFileEntries())
+      // run duplicate check from the LinkedList which may contain duplicates
+      for (final String entry : ocf.getEntries())
       {
         if (!entriesSet.add(entry.toLowerCase(Locale.ENGLISH)))
         {
@@ -319,7 +322,11 @@ public class OCFChecker
         {
           report.message(MessageId.OPF_061, EPUBLocation.create(ocf.getPackagePath()), entry);
         }
+      }
 
+      // check all file entries without duplicates
+      for (final String entry : ocf.getFileEntries())
+      {
         ocf.reportMetadata(entry, report);
 
         // if the entry is not in the whitelist (META-INF/* + mimetype)
@@ -345,6 +352,7 @@ public class OCFChecker
         OCFFilenameChecker.checkCompatiblyEscaped(entry, report, validationVersion);
       }
 
+      // check all directory entries without duplicates
       for (String directory : ocf.getDirectoryEntries())
       {
         boolean hasContents = false;

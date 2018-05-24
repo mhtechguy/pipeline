@@ -35,9 +35,6 @@ import java.util.Map;
 import com.adobe.epubcheck.api.EPUBProfile;
 import com.adobe.epubcheck.api.EpubCheck;
 import com.adobe.epubcheck.api.EpubCheckFactory;
-import com.adobe.epubcheck.api.Option;
-import com.adobe.epubcheck.api.OptionSet;
-import com.adobe.epubcheck.api.OptionSet.OptionSetBuilder;
 import com.adobe.epubcheck.api.Report;
 import com.adobe.epubcheck.nav.NavCheckerFactory;
 import com.adobe.epubcheck.opf.DocumentValidator;
@@ -65,6 +62,13 @@ import com.adobe.epubcheck.util.outWriter;
 public class EpubChecker
 {
 
+  static {
+    /* fix #665 (window-less "Checker" gui app on Mac)
+     * set -Djava.awt.headless=true programmatically as early as possible
+     */
+    System.setProperty("java.awt.headless", "true");
+  }
+
   String path = null;
   String mode = null;
   EPUBProfile profile = null;
@@ -80,7 +84,6 @@ public class EpubChecker
   boolean listChecks = false;
   boolean useCustomMessageFile = false;
   boolean failOnWarnings = false;
-  OptionSet options;
 
   int reportingLevel = ReportingLevel.Info;
 
@@ -152,14 +155,14 @@ public class EpubChecker
       outWriter.println(Messages.get("display_help"));
       System.err.println(String.format(Messages.get("mode_version_not_supported"), mode, version));
 
-      throw new RuntimeException(
-          String.format(Messages.get("mode_version_not_supported"), mode, version));
+      throw new RuntimeException(String.format(Messages.get("mode_version_not_supported"), mode,
+          version));
     }
 
     DocumentValidator check = factory.newInstance(new ValidationContextBuilder().path(path)
         .report(report).resourceProvider(resourceProvider).mimetype(modeMimeTypeMap.get(opsType))
-        .version(version).profile(profile).options(options).build());
-
+        .version(version).profile(profile).build());
+    
     if (check.getClass() == EpubCheck.class)
     {
       int validationResult = ((EpubCheck) check).doValidate();
@@ -178,14 +181,23 @@ public class EpubChecker
     }
     else
     {
-      if (check.validate())
+      boolean validationResult = check.validate();
+      if (validationResult)
       {
         outWriter.println(Messages.get("no_errors__or_warnings"));
         return 0;
       }
-      System.err.println(Messages.get("there_were_errors"));
+      else if (report.getWarningCount() > 0 && report.getFatalErrorCount() == 0 && report.getErrorCount() == 0)
+      {
+        System.err.println(Messages.get("there_were_warnings"));
+        return failOnWarnings ? 1 : 0;
+      }
+      else
+      {
+        System.err.println(Messages.get("there_were_errors"));
+        return 1;
+      }
     }
-    return 1;
   }
 
   int validateEpubFile(String path, EPUBVersion version, Report report)
@@ -219,32 +231,42 @@ public class EpubChecker
       outWriter.println(Messages.get("display_help"));
       System.err.println(String.format(Messages.get("mode_version_not_supported"), mode, version));
 
-      throw new RuntimeException(
-          String.format(Messages.get("mode_version_not_supported"), mode, version));
+      throw new RuntimeException(String.format(Messages.get("mode_version_not_supported"), mode,
+          version));
     }
 
     DocumentValidator check = factory.newInstance(
-        new ValidationContextBuilder().path(path).report(report).resourceProvider(resourceProvider)
-            .mimetype(modeMimeTypeMap.get(opsType)).version(version).profile(profile).build());
+        new ValidationContextBuilder().path(path)
+        .report(report).resourceProvider(resourceProvider).mimetype(modeMimeTypeMap.get(opsType))
+        .version(version).profile(profile).build());
 
-    if (check.validate())
+    boolean validationResult = check.validate();
+    if (validationResult)
     {
       outWriter.println(Messages.get("no_errors__or_warnings"));
       return 0;
     }
-    System.err.println(Messages.get("there_were_errors"));
-
-    return 1;
+    else if (report.getWarningCount() > 0 && report.getFatalErrorCount() == 0 && report.getErrorCount() == 0)
+    {
+      System.err.println(Messages.get("there_were_warnings"));
+      return failOnWarnings ? 1 : 0;
+    }
+    else
+    {
+      System.err.println(Messages.get("there_were_errors"));
+      return 1;
+    }
   }
 
   public int run(String[] args)
   {
+    Report report = null;
     int returnValue = 1;
     try
     {
       if (processArguments(args))
       {
-        Report report = createReport();
+        report = createReport();
         report.initialize();
         if (listChecks)
         {
@@ -267,10 +289,38 @@ public class EpubChecker
       returnValue = 1;
     } finally
     {
-      outWriter.println(Messages.get("epubcheck_completed"));
-      outWriter.setQuiet(false);
+      printEpubCheckCompleted(report);
     }
     return returnValue;
+  }
+
+  private void printEpubCheckCompleted(Report report)
+  {
+    if(report != null) {
+      StringBuilder messageCount = new StringBuilder();
+      if(reportingLevel <= ReportingLevel.Fatal) {
+        messageCount.append(Messages.get("messages") + ": ");
+        messageCount.append(String.format(Messages.get("counter_fatal"), report.getFatalErrorCount()));
+      }
+      if(reportingLevel <= ReportingLevel.Error) {
+        messageCount.append(" / " + String.format(Messages.get("counter_error"), report.getErrorCount()));
+      }
+      if(reportingLevel <= ReportingLevel.Warning) {
+        messageCount.append(" / " + String.format(Messages.get("counter_warn"), report.getWarningCount()));
+      }
+      if(reportingLevel <= ReportingLevel.Info) {
+        messageCount.append(" / " + String.format(Messages.get("counter_info"), report.getInfoCount()));
+      }
+      if(reportingLevel <= ReportingLevel.Usage) {
+        messageCount.append(" / " + String.format(Messages.get("counter_usage"), report.getUsageCount()));
+      }
+      if(messageCount.length() > 0) {
+        messageCount.append("\n");
+        outWriter.println(messageCount);
+      }
+    }
+    outWriter.println(Messages.get("epubcheck_completed"));
+    outWriter.setQuiet(false);
   }
 
   private void dumpMessageDictionary(Report report)
@@ -363,12 +413,13 @@ public class EpubChecker
 
   public int processEpubFile(String[] args)
   {
+    Report report = null;
     int returnValue = 1;
     try
     {
       if (processArguments(args))
       {
-        Report report = createReport();
+        report = createReport();
         report.initialize();
         if (listChecks)
         {
@@ -391,8 +442,7 @@ public class EpubChecker
       returnValue = 1;
     } finally
     {
-      outWriter.println(Messages.get("epubcheck_completed"));
-      outWriter.setQuiet(false);
+      printEpubCheckCompleted(report);
     }
     return returnValue;
   }
@@ -443,8 +493,15 @@ public class EpubChecker
     {
       if (expanded)
       {
-        Archive epub;
+        // check existance of path (fix #525)
+        File f = new File(path);
+        if (!f.exists())
+        {
+          System.err.println(String.format(Messages.get("directory_not_found"), path));
+          return 1;
+        }
 
+        Archive epub;
         try
         {
           epub = new Archive(path, true);
@@ -456,7 +513,7 @@ public class EpubChecker
 
         epub.createArchive();
         report.setEpubFileName(epub.getEpubFile().getAbsolutePath());
-        EpubCheck check = new EpubCheck(epub.getEpubFile(), report, profile, options);
+        EpubCheck check = new EpubCheck(epub.getEpubFile(), report, profile);
         int validationResult = check.doValidate();
         if (validationResult == 0)
         {
@@ -524,7 +581,6 @@ public class EpubChecker
    */
   private boolean processArguments(String[] args)
   {
-    OptionSetBuilder optionsBuilder = new OptionSetBuilder();
     // Exit if there are no arguments passed to main
     if (args.length < 1)
     {
@@ -551,8 +607,8 @@ public class EpubChecker
           else
           {
             outWriter.println(Messages.get("display_help"));
-            throw new RuntimeException(
-                new InvalidVersionException(InvalidVersionException.UNSUPPORTED_VERSION));
+            throw new RuntimeException(new InvalidVersionException(
+                InvalidVersionException.UNSUPPORTED_VERSION));
           }
         }
         else
@@ -614,8 +670,8 @@ public class EpubChecker
           File pathFile = new File(path);
           if (pathFile.isDirectory())
           {
-            fileOut = new File(pathFile.getAbsoluteFile().getParentFile(),
-                pathFile.getName() + "check.xml");
+            fileOut = new File(pathFile.getAbsoluteFile().getParentFile(), pathFile.getName()
+                + "check.xml");
           }
           else
           {
@@ -623,32 +679,6 @@ public class EpubChecker
           }
         }
         xmlOutput = true;
-      }
-      else if (args[i].equals("--a11y") || args[i].equals("-a11y") || args[i].equals("-a"))
-      {
-        File a11yReport = null;
-        if ((args.length > (i + 1)) && !(args[i + 1].startsWith("-")))
-        {
-          a11yReport = new File(args[++i]);
-        }
-        else if ((args.length > (i + 1)) && (args[i + 1].equalsIgnoreCase("-")))
-        {
-          i++;
-        }
-        else
-        {
-          File pathFile = new File(path);
-          if (pathFile.isDirectory())
-          {
-            a11yReport = new File(pathFile.getAbsoluteFile().getParentFile(),
-                pathFile.getName() + "_a11y-report.html");
-          }
-          else
-          {
-            a11yReport = new File(path + "_a11y-report.html");
-          }
-        }
-        optionsBuilder.add(Option.Key.ACCESSIBILITY, a11yReport);
       }
       else if (args[i].equals("--json") || args[i].equals("-json") || args[i].equals("-j"))
       {
@@ -666,8 +696,8 @@ public class EpubChecker
           File pathFile = new File(path);
           if (pathFile.isDirectory())
           {
-            fileOut = new File(pathFile.getAbsoluteFile().getParentFile(),
-                pathFile.getName() + "check.json");
+            fileOut = new File(pathFile.getAbsoluteFile().getParentFile(), pathFile.getName()
+                + "check.json");
           }
           else
           {
@@ -692,8 +722,8 @@ public class EpubChecker
           File pathFile = new File(path);
           if (pathFile.isDirectory())
           {
-            fileOut = new File(pathFile.getAbsoluteFile().getParentFile(),
-                pathFile.getName() + "check.xmp");
+            fileOut = new File(pathFile.getAbsoluteFile().getParentFile(), pathFile.getName()
+                + "check.xmp");
           }
           else
           {
@@ -840,12 +870,12 @@ public class EpubChecker
         mode = null;
       }
     }
-    else if (mode == null)
+    else if (mode == null && profile == null)
     {
       outWriter.println(Messages.get("mode_required"));
       return false;
     }
-    options = optionsBuilder.build();
+
     return true;
   }
 

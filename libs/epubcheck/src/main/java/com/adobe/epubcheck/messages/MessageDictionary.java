@@ -92,6 +92,7 @@ public class MessageDictionary
       map.put(MessageId.CHK_005, Severity.ERROR);
       map.put(MessageId.CHK_006, Severity.ERROR);
       map.put(MessageId.CHK_007, Severity.ERROR);
+      map.put(MessageId.CHK_008, Severity.ERROR);
 
       // CSS
       map.put(MessageId.CSS_001, Severity.ERROR);
@@ -111,7 +112,7 @@ public class MessageDictionary
       map.put(MessageId.CSS_016, Severity.SUPPRESSED);
       map.put(MessageId.CSS_017, Severity.WARNING);
       map.put(MessageId.CSS_019, Severity.WARNING);
-      map.put(MessageId.CSS_020, Severity.USAGE);
+      map.put(MessageId.CSS_020, Severity.ERROR);
       map.put(MessageId.CSS_021, Severity.USAGE);
       map.put(MessageId.CSS_022, Severity.USAGE);
       map.put(MessageId.CSS_023, Severity.USAGE);
@@ -163,6 +164,7 @@ public class MessageDictionary
       map.put(MessageId.HTM_050, Severity.USAGE);
       map.put(MessageId.HTM_051, Severity.WARNING);
       map.put(MessageId.HTM_052, Severity.ERROR);
+      map.put(MessageId.HTM_053, Severity.INFO);
 
       // Media
       map.put(MessageId.MED_001, Severity.ERROR);
@@ -184,7 +186,7 @@ public class MessageDictionary
       map.put(MessageId.NAV_009, Severity.ERROR);
 
       // NCX
-      map.put(MessageId.NCX_001, Severity.USAGE);
+      map.put(MessageId.NCX_001, Severity.ERROR);
       map.put(MessageId.NCX_002, Severity.ERROR);
       map.put(MessageId.NCX_003, Severity.USAGE);
       map.put(MessageId.NCX_004, Severity.USAGE);
@@ -304,6 +306,7 @@ public class MessageDictionary
       map.put(MessageId.PKG_021, Severity.ERROR);
       map.put(MessageId.PKG_022, Severity.WARNING);
       map.put(MessageId.PKG_023, Severity.USAGE);
+      map.put(MessageId.PKG_024, Severity.INFO);
 
       // Resources
       map.put(MessageId.RSC_001, Severity.ERROR);
@@ -329,6 +332,7 @@ public class MessageDictionary
       map.put(MessageId.RSC_020, Severity.ERROR);
       map.put(MessageId.RSC_021, Severity.ERROR);
       map.put(MessageId.RSC_022, Severity.INFO);
+      map.put(MessageId.RSC_023, Severity.WARNING);
 
       // Scripting
       map.put(MessageId.SCP_001, Severity.USAGE);

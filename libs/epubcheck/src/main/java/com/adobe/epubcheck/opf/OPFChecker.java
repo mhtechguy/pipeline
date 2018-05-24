@@ -29,10 +29,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
-import com.adobe.epubcheck.a11y.A11yReporter;
 import com.adobe.epubcheck.api.EPUBLocation;
 import com.adobe.epubcheck.api.EPUBProfile;
-import com.adobe.epubcheck.api.Option;
 import com.adobe.epubcheck.api.Report;
 import com.adobe.epubcheck.bitmap.BitmapCheckerFactory;
 import com.adobe.epubcheck.css.CSSCheckerFactory;
@@ -161,11 +159,6 @@ public class OPFChecker implements DocumentValidator, ContentChecker
     }
 
     xrefChecker.checkReferences();
-
-    if (context.options.has(Option.Key.ACCESSIBILITY))
-    {
-      new A11yReporter(context, opfHandler.getItems()).check();
-    }
   }
 
   protected void checkBindings()
@@ -423,11 +416,15 @@ public class OPFChecker implements DocumentValidator, ContentChecker
     }
     if (checkerFactory != null)
     {
-      // Create the content checker with an overridden validation context
-      ContentChecker checker = checkerFactory.newInstance(new ValidationContextBuilder(context)
-          .path(item.getPath()).mimetype(mimetype).properties(item.getProperties()).build());
-      // Validate
-      checker.runChecks();
+      try {
+        // Create the content checker with an overridden validation context
+        ContentChecker checker = checkerFactory.newInstance(new ValidationContextBuilder(context)
+            .path(item.getPath()).mimetype(mimetype).properties(item.getProperties()).build());
+        // Validate
+        checker.runChecks();
+      } catch (IllegalStateException e) {
+        report.message(MessageId.CHK_008, EPUBLocation.create(path), item.getPath());
+      }
     }
   }
 

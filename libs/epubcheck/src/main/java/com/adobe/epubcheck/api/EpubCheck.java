@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipFile;
 
@@ -37,11 +38,10 @@ import com.adobe.epubcheck.ocf.OCFChecker;
 import com.adobe.epubcheck.ocf.OCFPackage;
 import com.adobe.epubcheck.ocf.OCFZipPackage;
 import com.adobe.epubcheck.opf.DocumentValidator;
+import com.adobe.epubcheck.opf.OPFData;
+import com.adobe.epubcheck.opf.ValidationContext;
 import com.adobe.epubcheck.opf.ValidationContext.ValidationContextBuilder;
-import com.adobe.epubcheck.util.CheckUtil;
-import com.adobe.epubcheck.util.DefaultReportImpl;
-import com.adobe.epubcheck.util.ResourceUtil;
-import com.adobe.epubcheck.util.WriterReportImpl;
+import com.adobe.epubcheck.util.*;
 
 /**
  * Public interface to epub validator.
@@ -53,7 +53,6 @@ public class EpubCheck implements DocumentValidator
   final private File epubFile;
   final private EPUBProfile profile;
   final private Report report;
-  final private OptionSet options;
 
   public static String version()
   {
@@ -125,36 +124,17 @@ public class EpubCheck implements DocumentValidator
    */
   public EpubCheck(File epubFile, Report report, EPUBProfile profile)
   {
-    this(epubFile,report,profile, null);
-  }
-
-
-  /**
-   * Create an epub validator to validate the given file and report issues to a
-   * given Report object. Can validate a specific EPUB profile (e.g. EDUPUB,
-   * DICT, IDX, etc). A set of runtime Options can also be specified.
-   * 
-   */
-  public EpubCheck(File epubFile, Report report, EPUBProfile profile, OptionSet options)
-  {
     this.epubFile = epubFile;
     this.report = report;
     this.profile = profile == null ? EPUBProfile.DEFAULT : profile;
-    this.options = options;
   }
 
-  
   public EpubCheck(InputStream inputStream, Report report, String uri)
   {
     this(inputStream, report, uri, EPUBProfile.DEFAULT);
   }
-  
-  public EpubCheck(InputStream inputStream, Report report, String uri, EPUBProfile profile)
-  {
-    this(inputStream, report, uri, profile, null);
-  }
 
-  public EpubCheck(InputStream inputStream, Report report, String uri, EPUBProfile profile, OptionSet options)
+  public EpubCheck(InputStream inputStream, Report report, String uri, EPUBProfile profile)
   {
     File epubFile;
     OutputStream out = null;
@@ -173,7 +153,6 @@ public class EpubCheck implements DocumentValidator
 
       this.epubFile = epubFile;
       this.profile = profile == null ? EPUBProfile.DEFAULT : profile;
-      this.options = options;
       this.report = report;
     } catch (IOException e)
     {
@@ -217,9 +196,6 @@ public class EpubCheck implements DocumentValidator
     FileInputStream epubIn = null;
     try
     {
-      String extension = ResourceUtil.getExtension(epubFile.getName());
-      checkExtension(extension);
-
       if (!epubFile.exists())
       {
         report.message(MessageId.PKG_018, EPUBLocation.create(epubFile.getName()));
@@ -232,8 +208,11 @@ public class EpubCheck implements DocumentValidator
 
       OCFPackage ocf = new OCFZipPackage(zip);
       OCFChecker checker = new OCFChecker(new ValidationContextBuilder().ocf(ocf).report(report)
-          .profile(profile).options(options).build());
+          .profile(profile).build());
       checker.runChecks();
+
+      String extension = ResourceUtil.getExtension(epubFile.getName());
+      checkExtension(ocf, extension);
 
       /*** Here are called custom checks (CTC Package) **/
       CheckManager c = new CheckManager(zip, report);
@@ -266,7 +245,7 @@ public class EpubCheck implements DocumentValidator
     return returnValue;
   }
 
-  void checkExtension(String extension)
+  void checkExtension(OCFPackage ocf, String extension)
   {
     if (extension != null)
     {
@@ -278,7 +257,12 @@ public class EpubCheck implements DocumentValidator
         }
         else
         {
-          report.message(MessageId.PKG_017, EPUBLocation.create(epubFile.getName(), extension));
+          List<String> opfPaths = ocf.getOcfData().getEntries(OPFData.OPF_MIME_TYPE);
+          if(ocf.getOpfData().get(opfPaths.get(0)).getVersion() == EPUBVersion.VERSION_3) {
+            report.message(MessageId.PKG_024, EPUBLocation.create(epubFile.getName(), extension));
+          } else {
+            report.message(MessageId.PKG_017, EPUBLocation.create(epubFile.getName(), extension));
+          }
         }
       }
     }
@@ -328,6 +312,10 @@ public class EpubCheck implements DocumentValidator
       else if (!CheckUtil.checkString(header, 30, "mimetype"))
       {
         report.message(MessageId.PKG_006, EPUBLocation.create(epubFile.getName()));
+      }
+      else if (!CheckUtil.checkString(header, 38, "application/epub+zip"))
+      {
+        report.message(MessageId.PKG_007, EPUBLocation.create("mimetype"));
       }
     }
   }

@@ -23,6 +23,7 @@
 package com.adobe.epubcheck.api;
 
 import java.util.Collections;
+import java.util.Locale;
 
 import org.junit.Test;
 
@@ -35,15 +36,6 @@ public class Epub30CheckExpandedTest extends AbstractEpubCheckTest
   {
     super("/30/expanded/");
   }
-
-	// @Test
-	// public void testA11yReport()
-	// {
-	// testValidateDocument("valid/a11y-report", new OptionSetBuilder()
-	// .add(Option.Key.ACCESSIBILITY, new
-	// File("/tmp/a11y-report.html")).build(),
-	// true);
-	// }
 
   @Test
   public void testValidateEPUBPLoremBasic()
@@ -271,7 +263,7 @@ public class Epub30CheckExpandedTest extends AbstractEpubCheckTest
   @Test
   public void testValidateEPUB30_CSSURLS_2()
   {
-    Collections.addAll(expectedErrors, MessageId.OPF_027);
+    Collections.addAll(expectedErrors, MessageId.OPF_027, MessageId.CSS_020, MessageId.CSS_020);
     // 'imgs/table_header_bg_uni.jpg': referenced resource missing in the
     // package
     testValidateDocument("invalid/lorem-css-urls-2/");
@@ -281,6 +273,7 @@ public class Epub30CheckExpandedTest extends AbstractEpubCheckTest
   public void testValidateEPUB30_CSSURLS_3()
   {
     Collections.addAll(expectedWarnings, MessageId.CSS_017);
+    Collections.addAll(expectedErrors, MessageId.CSS_020, MessageId.CSS_020);
     // 'imgs/table_header_bg_uni.jpg': referenced resource missing in the
     // package
     testValidateDocument("invalid/lorem-css-urls-3/");
@@ -487,11 +480,27 @@ public class Epub30CheckExpandedTest extends AbstractEpubCheckTest
   {
     testValidateDocument("invalid/custom-ns-attr/");
   }
-
+  
+  /**
+   * Also tests locale-independent character case transformations (such as
+   * lower-casing). Specifically, in issue 711, when the default locale is set
+   * to Turkish, lower-casing resulted in incorrect vocabulary strings (for
+   * "PAGE_LIST" enum constant name relevant to the original issue report, as
+   * well as for numerous other strings). Therefore, a Turkish locale is set as
+   * the default at the beginning of the test (the original locale is restored
+   * at the end of the test).
+   */
   @Test
   public void testPageList()
   {
-    testValidateDocument("valid/page-list");
+    Locale l = Locale.getDefault();
+    // E.g., tests that I is not lower-cased to \u0131 based on locale's collation rules:
+    Locale.setDefault(new Locale("tr", "TR"));
+    try {
+      testValidateDocument("valid/page-list");
+    } finally { // restore the original locale
+      Locale.setDefault(l);
+    }
   }
 
   @Test
@@ -598,23 +607,20 @@ public class Epub30CheckExpandedTest extends AbstractEpubCheckTest
   {
     testValidateDocument("valid/issue567/");
   }
-
+  
   @Test
-  public void testIssue615_langtag()
-  {
+  public void testIssue615_langtag() {
     testValidateDocument("valid/issue615-langtags/");
   }
-
+  
   @Test
-  public void testResource_Missing()
-  {
+  public void testResource_Missing() {
     Collections.addAll(expectedErrors, MessageId.RSC_001);
     testValidateDocument("invalid/resource-missing/");
   }
-
+  
   @Test
-  public void testResource_RefInXHTML_Undeclared()
-  {
+  public void testResource_RefInXHTML_Undeclared() {
     Collections.addAll(expectedErrors, MessageId.RSC_007);
     testValidateDocument("invalid/resource-missing-refinxhtml/");
   }
@@ -637,41 +643,35 @@ public class Epub30CheckExpandedTest extends AbstractEpubCheckTest
     Collections.addAll(expectedErrors, MessageId.CSS_010);
     testValidateDocument("invalid/xpgt-no-fallback/");
   }
-
+  
   @Test
-  public void testFont_OpenType()
-  {
+  public void testFont_OpenType() {
     testValidateDocument("valid/font-opentype");
   }
-
+  
   @Test
-  public void testFont_NonCoreMediaType()
-  {
+  public void testFont_NonCoreMediaType() {
     testValidateDocument("valid/font-othermediatype");
   }
-
+  
   @Test
-  public void testFXL_WithSVG()
-  {
+  public void testFXL_WithSVG() {
     testValidateDocument("valid/fxl-svg/");
   }
-
+  
   @Test
-  public void testFXL_WithSVG_NoViewbox()
-  {
+  public void testFXL_WithSVG_NoViewbox() {
     expectedErrors.add(MessageId.HTM_048);
     testValidateDocument("invalid/fxl-svg-noviewbox/");
   }
-
+  
   @Test
-  public void testFXL_WithSVGNotInSpine()
-  {
+  public void testFXL_WithSVGNotInSpine() {
     testValidateDocument("valid/fxl-svg-notinspine/");
   }
-
+  
   @Test
-  public void testLink_MissingResource()
-  {
+  public void testLink_MissingResource(){
     Collections.addAll(expectedWarnings, MessageId.RSC_007w);
     testValidateDocument("invalid/link-missing/");
   }
@@ -799,7 +799,7 @@ public class Epub30CheckExpandedTest extends AbstractEpubCheckTest
   {
     testValidateDocument("valid/edu-basic/", EPUBProfile.EDUPUB);
   }
-
+  
   @Test
   public void testEdupub_FXL()
   {
@@ -967,11 +967,11 @@ public class Epub30CheckExpandedTest extends AbstractEpubCheckTest
         MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005, MessageId.RSC_005);
     testValidateDocument("invalid/data-nav-regionbased-struct");
   }
-
+  
   @Test
   public void testDataNav_RegionBased_ComicsTypes()
   {
-    testValidateDocument("valid/data-nav-regionbased-comics");
+      testValidateDocument("valid/data-nav-regionbased-comics");
   }
 
   @Test
@@ -1062,17 +1062,24 @@ public class Epub30CheckExpandedTest extends AbstractEpubCheckTest
   }
 
   @Test
-  public void testEncryption_Unknown()
-  {
+  public void testEncryption_Unknown(){
     expectedErrors.add(MessageId.RSC_004);
     testValidateDocument("invalid/encryption-unknown");
   }
-
+  
   @Test
   public void testOutOfSpineRef()
   {
     expectedErrors.add(MessageId.RSC_011);
     testValidateDocument("invalid/href-outofspine");
   }
+  
+  @Test
+  public void testInvalidCssFontSizeValue()
+  {
+    Collections.addAll(expectedErrors, MessageId.CSS_020, MessageId.CSS_020, MessageId.CSS_020);
+    testValidateDocument("invalid/invalid-css-font-size-value");
+  }
+  
 
 }

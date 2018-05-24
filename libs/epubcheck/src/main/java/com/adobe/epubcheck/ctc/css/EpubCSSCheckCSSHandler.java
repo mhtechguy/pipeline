@@ -27,6 +27,13 @@ import com.adobe.epubcheck.util.LocationImpl;
 import com.adobe.epubcheck.util.TextSearchDictionaryEntry;
 import com.google.common.base.Optional;
 
+/**
+ *  ===  WARNING  ==========================================<br/>
+ *  This class is scheduled to be refactored and integrated<br/>
+ *  in another package.<br/>
+ *  Please keep changes minimal (bug fixes only) until then.<br/>
+ *  ========================================================<br/>
+ */
 public class EpubCSSCheckCSSHandler implements CssContentHandler, CssErrorHandler
 {
   String path;
@@ -544,11 +551,19 @@ public class EpubCSSCheckCSSHandler implements CssContentHandler, CssErrorHandle
       {
         if (!isGlobalFixedFormat || hasIndividualFixedFormatDocuments)
         {
+          // report non-relative font-size keyword as ACC USAGE message
           String value = construct.toCssString().toLowerCase(Locale.ROOT);
-          if (("smaller".compareTo(value) != 0) && ("larger".compareTo(value) != 0) && ("inherit".compareTo(value) != 0))
+
+          // report not allowed font-size keyword as ERROR message
+          if (!isFontSize(construct))
           {
-            getReport().message(id, getCorrectedEPUBLocation(path, declaration.getLocation().getLine(), declaration.getLocation().getColumn(), declaration.toCssString()));
+            getReport().message(MessageId.CSS_020, getCorrectedEPUBLocation(path, declaration.getLocation().getLine(), declaration.getLocation().getColumn(), declaration.toCssString()), construct.toCssString());
           }
+          else if (("smaller".compareTo(value) != 0) && ("larger".compareTo(value) != 0) && ("inherit".compareTo(value) != 0))
+          {
+            getReport().message(id, getCorrectedEPUBLocation(path, declaration.getLocation().getLine(), declaration.getLocation().getColumn(), declaration.toCssString()), construct.toCssString());
+          }
+          
         }
         break;
       }
@@ -559,11 +574,17 @@ public class EpubCSSCheckCSSHandler implements CssContentHandler, CssErrorHandle
           switch (quantity.getUnit())
           {
             case EMS:
+            case EXS:
             case REMS:
             case PERCENTAGE:
               break;
+            case LENGTH:
+              // report absolute font-size as ACC USAGE message
+              getReport().message(id, getCorrectedEPUBLocation(path, declaration.getLocation().getLine(), declaration.getLocation().getColumn(), declaration.toCssString()), construct.toCssString());
+              break;
             default:
-              getReport().message(id, getCorrectedEPUBLocation(path, declaration.getLocation().getLine(), declaration.getLocation().getColumn(), declaration.toCssString()));
+              // report unsupported font-size as ERROR message
+              getReport().message(MessageId.CSS_020, getCorrectedEPUBLocation(path, declaration.getLocation().getLine(), declaration.getLocation().getColumn(), declaration.toCssString()), construct.toCssString());
               break;
           }
         }
@@ -672,6 +693,7 @@ public class EpubCSSCheckCSSHandler implements CssContentHandler, CssErrorHandle
           "xx-large",
           "larger",
           "smaller",
+          "inherit"
       };
       fontSizes = getHashSetFromStrings(fontSizeStrings);
     }
@@ -688,6 +710,7 @@ public class EpubCSSCheckCSSHandler implements CssContentHandler, CssErrorHandle
       {
         case PERCENTAGE:
         case EMS:
+        case EXS:
         case LENGTH:
           return true;
       }

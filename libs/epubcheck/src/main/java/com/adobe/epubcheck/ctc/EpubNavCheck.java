@@ -25,6 +25,13 @@ import com.adobe.epubcheck.util.FeatureEnum;
 import com.adobe.epubcheck.util.HandlerUtil;
 import com.adobe.epubcheck.util.PathUtil;
 
+/**
+ *  ===  WARNING  ==========================================<br/>
+ *  This class is scheduled to be refactored and integrated<br/>
+ *  in another package.<br/>
+ *  Please keep changes minimal (bug fixes only) until then.<br/>
+ *  ========================================================<br/>
+ */
 public class EpubNavCheck implements DocumentValidator
 {
 
@@ -123,6 +130,8 @@ public class EpubNavCheck implements DocumentValidator
       // no need to report an error here because it was already reported inside of the docParser.
       return false;
     }
+
+    int landmarkNavCount = 0;
     NodeList n = doc.getElementsByTagName("nav");
 
     for (int i = 0; i < n.getLength(); i++)
@@ -160,7 +169,16 @@ public class EpubNavCheck implements DocumentValidator
         {
           report.message(MessageId.NAV_002, EPUBLocation.create(navDocEntry, HandlerUtil.getElementLineNumber(navElement), HandlerUtil.getElementColumnNumber(navElement), "page-list"));
         }
+        else if (type.equals("landmarks"))
+        {
+          ++landmarkNavCount;
+        }
       }
+    }
+
+    if (landmarkNavCount == 0)
+    {
+      report.message(MessageId.ACC_008, EPUBLocation.create(navDocEntry));
     }
 
     PackageManifest manifest = epack.getManifest();
@@ -180,7 +198,7 @@ public class EpubNavCheck implements DocumentValidator
 
             if (path != null && !path.equals(tocFileName) && !path.equals(navDocEntry) && !tocLinkSet.contains(path))
             {
-              report.message(MessageId.OPF_058, EPUBLocation.create(navDocEntry, -1, -1, path));
+              report.message(MessageId.OPF_058, EPUBLocation.create(navDocEntry, -1, -1, path), si.getIdref());
             }
         }
       }

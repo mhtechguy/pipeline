@@ -1,5 +1,6 @@
 package com.adobe.epubcheck.util;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.text.CharacterIterator;
 import java.text.SimpleDateFormat;
@@ -122,6 +123,9 @@ public abstract class XmlReportAbstract extends MasterReport {
 
 	@Override
 	public void info(String resource, FeatureEnum feature, String value) {
+		// Dont store 'null' values
+		if (value == null) return;
+		
 		switch (feature) {
 		case TOOL_DATE:
 			if (value != null && !value.startsWith("$")) {
@@ -221,9 +225,19 @@ public abstract class XmlReportAbstract extends MasterReport {
 		if (path == null || path.length() == 0) {
 			return null;
 		}
+		// Try / because of uris 
 		int lastSlash = path.lastIndexOf('/');
 		if (lastSlash == -1) {
-			return path;
+			if (File.separatorChar != '/') {
+				int lastSlash2 = path.lastIndexOf(File.separatorChar);
+				if (lastSlash2 == -1) {
+					return path;
+				} else {
+					return path.substring(lastSlash2 + 1);
+				}
+			} else {
+				return path;
+			}
 		} else {
 			return path.substring(lastSlash + 1);
 		}

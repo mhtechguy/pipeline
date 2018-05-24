@@ -53,7 +53,7 @@ public class EpubCheckFactory implements DocumentValidatorFactory
     }
     else
     {
-      return new EpubCheck(new File(context.path), context.report, context.profile, context.options);
+      return new EpubCheck(new File(context.path), context.report, context.profile);
     }
   }
 }
