@@ -15,7 +15,7 @@
   <groupId>org.daisy.pipeline</groupId>
   <artifactId>gui</artifactId>
   <packaging>bundle</packaging>
-  <version>1.2.0</version>
+  <version>1.2.1-SNAPSHOT</version>
   <name>gui</name>
   <description>A lightweight cross-platform GUI for the Pipeline2</description>
   <url>https://github.com/daisy-consortium/pipeline-gui</url>
@@ -28,13 +28,17 @@
       <dependency>
         <groupId>org.daisy.pipeline</groupId>
         <artifactId>framework-bom</artifactId>
-        <version>1.11.0</version>
+        <version>1.11.1-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
     <dependency>
       <groupId>de.codecentric.centerdevice</groupId>
       <artifactId>centerdevice-nsmenufx</artifactId>
@@ -102,8 +106,4 @@
     </plugins>
   </build>
   <repositories> </repositories>
-
-  <scm>
-    <tag>v1.2.0</tag>
-  </scm>
 </project>
