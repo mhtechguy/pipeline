@@ -3,6 +3,7 @@
 set -e
 set -o pipefail
 for arg in "$@"; do
-    cd $arg
+    pushd $arg
     eval $MVN clean verify | eval $MVN_LOG
+    popd
 done
