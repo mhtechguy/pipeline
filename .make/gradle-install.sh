@@ -2,6 +2,7 @@
 [[ -n ${VERBOSE+x} ]] && set -x
 set -e
 for arg in "$@"; do
-    cd $arg
+    pushd $arg >/dev/null
     eval $GRADLE install
+    popd >/dev/null
 done
