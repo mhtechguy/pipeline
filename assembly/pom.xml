@@ -32,17 +32,17 @@
       <dependency>
         <groupId>org.daisy.pipeline</groupId>
         <artifactId>gui</artifactId>
-        <version>1.2.0</version>
+        <version>1.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.daisy.pipeline</groupId>
         <artifactId>updater</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.daisy.pipeline</groupId>
         <artifactId>updater-gui</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.felix</groupId>
@@ -104,6 +104,14 @@
         <version>1.11.0</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <!--
+          Celia module
+      -->
+      <dependency>
+        <groupId>org.daisy.pipeline.modules.braille</groupId>
+        <artifactId>mod-celia</artifactId>
+        <version>1.5.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -1143,6 +1151,13 @@
                 <artifactItem>
                   <groupId>org.daisy.pipeline.modules.braille</groupId>
                   <artifactId>zedai-to-pef</artifactId>
+                </artifactItem>
+                <!--
+                    Celia modules
+                -->
+                <artifactItem>
+                  <groupId>org.daisy.pipeline.modules.braille</groupId>
+                  <artifactId>mod-celia</artifactId>
                 </artifactItem>
               </artifactItems>
             </configuration>
