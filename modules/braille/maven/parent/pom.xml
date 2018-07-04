@@ -24,6 +24,9 @@
     <tag>HEAD</tag>
   </scm>
 
+  <properties>
+    <liblouis.version>3.6.0</liblouis.version>
+  </properties>
 
   <dependencyManagement>
     <dependencies>
