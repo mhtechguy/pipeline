@@ -14,6 +14,20 @@ MVN_PROPERTIES          := -Dworkspace="$(CURDIR)/$(MVN_WORKSPACE)" \
 MVN_RELEASE_CACHE_REPO  := $(MVN_CACHE)
 GRADLE                  := $(CURDIR)/libs/dotify/dotify.api/gradlew
 
+ifeq ($(shell uname),Darwin)
+nar.aol := x86_64-MacOSX-gpp
+else
+nar.aol := amd64-Linux-gpp
+endif
+
+# for nar packaging extension
+# snapshot currently not used
+NAR_PLUGIN_VERSION = 3.5.3-SNAPSHOT
+#$(TARGET_DIR)/effective-pom.xml : \
+#	$(TARGET_DIR)/poms/com/github/maven-nar/nar-maven-plugin/$(NAR_PLUGIN_VERSION)/nar-maven-plugin-$(NAR_PLUGIN_VERSION).jar
+#$(TARGET_DIR)/poms/com/github/maven-nar/nar-maven-plugin/$(NAR_PLUGIN_VERSION)/nar-maven-plugin-$(NAR_PLUGIN_VERSION).jar :
+#	$(MVN) -Dworkspace="$(TARGET_DIR)/poms" -f utils/nar-maven-plugin -DskipTests install
+
 ifneq ($(MAKECMDGOALS), dump-maven-cmd)
 ifneq ($(MAKECMDGOALS), dump-gradle-cmd)
 ifneq ($(MAKECMDGOALS), clean-website)
@@ -21,7 +35,6 @@ include .make/main.mk
 endif
 endif
 endif
-
 # -----------------------------------
 
 .PHONY : dist
