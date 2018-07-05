@@ -130,7 +130,7 @@ cli/.install.zip : cli/.install
 
 cli/.install : cli/cli/*.go
 
-cli/.install-darwin_386.zip : updater/cli/.install
+cli/.install-darwin_386.zip : cli/.install
 
 updater/cli/.install : updater/cli/*.go
 
