@@ -24,7 +24,17 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.eventbus.EventBus;
 
-public final class VolatileJobStorage implements JobStorage {
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
+
+@Component(
+    name = "volatile-job-storage",
+    immediate = true,
+    service = { JobStorage.class }
+)
+public class VolatileJobStorage implements JobStorage {
         private static final Logger logger = LoggerFactory
                         .getLogger(VolatileJobStorage.class);
 
@@ -49,6 +59,13 @@ public final class VolatileJobStorage implements JobStorage {
                 this.filter = filter;
         }
 
+        @Reference(
+           name = "event-bus-provider",
+           unbind = "-",
+           service = EventBusProvider.class,
+           cardinality = ReferenceCardinality.MANDATORY,
+           policy = ReferencePolicy.STATIC
+        )
         public void setEventBusProvider(EventBusProvider busProvider) {
                 this.bus = busProvider.get();
         }

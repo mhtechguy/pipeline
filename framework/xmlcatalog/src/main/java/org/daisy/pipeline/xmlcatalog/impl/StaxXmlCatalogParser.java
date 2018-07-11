@@ -3,6 +3,7 @@ package org.daisy.pipeline.xmlcatalog.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.function.Predicate;
 import java.util.LinkedList;
 
 import javax.xml.stream.XMLEventReader;
@@ -22,14 +23,19 @@ import org.daisy.pipeline.xmlcatalog.impl.XmlCatalogConstants.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-
-;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 /**
  * Stax based XmlCatalog parser implementation
  */
+@Component(
+	name = "catalog-parser",
+	service = { XmlCatalogParser.class }
+)
 public class StaxXmlCatalogParser implements XmlCatalogParser {
 
 	private static final String HTTP_WWW_OASIS_OPEN_ORG_COMMITTEES_ENTITY_RELEASE_1_0_CATALOG_DTD = "http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd";
@@ -72,6 +78,13 @@ public class StaxXmlCatalogParser implements XmlCatalogParser {
 	 * @param factory
 	 *            the new factory
 	 */
+	@Reference(
+		name = "stax-input-factory",
+		unbind = "-",
+		service = XMLInputFactory.class,
+		cardinality = ReferenceCardinality.MANDATORY,
+		policy = ReferencePolicy.STATIC
+	)
 	public void setFactory(XMLInputFactory factory) {
 		mFactory = factory;
 		mFactory.setXMLResolver(mResolver);
@@ -80,6 +93,7 @@ public class StaxXmlCatalogParser implements XmlCatalogParser {
 	/**
 	 * Activate (OSGI).
 	 */
+	@Activate
 	public void activate() {
 		logger.trace("Activating XmlCatalogParser");
 	}
@@ -156,16 +170,14 @@ public class StaxXmlCatalogParser implements XmlCatalogParser {
 		 * @throws XMLStreamException
 		 *             the xML stream exception
 		 */
-		private void parseCatalog(XMLEventReader reader)
-				throws XMLStreamException {
-			@SuppressWarnings("unchecked")
-			Predicate<XMLEvent> pred = Predicates.or(
-					EventPredicates.isStartOrStopElement(Elements.E_CATALOG),
-					EventPredicates.isStartOrStopElement(Elements.E_GROUP),
-					EventPredicates.isStartOrStopElement(Elements.E_PUBLIC),
-					EventPredicates.isStartOrStopElement(Elements.E_SYSTEM),
-					EventPredicates.isStartOrStopElement(Elements.E_URI),
-					EventPredicates.isStartOrStopElement(Elements.E_REWRITE));
+		private void parseCatalog(XMLEventReader reader) throws XMLStreamException {
+			Predicate<XMLEvent> pred =
+				    EventPredicates.isStartOrStopElement(Elements.E_CATALOG)
+				.or(EventPredicates.isStartOrStopElement(Elements.E_GROUP))
+				.or(EventPredicates.isStartOrStopElement(Elements.E_PUBLIC))
+				.or(EventPredicates.isStartOrStopElement(Elements.E_SYSTEM))
+				.or(EventPredicates.isStartOrStopElement(Elements.E_URI))
+				.or(EventPredicates.isStartOrStopElement(Elements.E_REWRITE));
 			StaxEventHelper.loop(reader, pred,
 					EventPredicates.getChildOrSiblingPredicate(),
 					new EventProcessor() {
