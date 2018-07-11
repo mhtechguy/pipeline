@@ -94,6 +94,14 @@ public class Calabash implements XProcEngine {
 	private Reader currentDefaultConfig = null;
 	
 	private XProcRuntime runtime() {
+		
+		// A new runtime needs to be created for every run because of
+		// a bug in XMLCalabash with p:iteration-position().
+		currentRuntime = null;
+		currentURIResolver = null;
+		currentCatalogFile = null;
+		currentConfigFile = null;
+		
 		System.setProperty("com.xmlcalabash.config.user", "false");
 		System.setProperty("com.xmlcalabash.config.local", "false");
 		if (currentRuntime == null || !equal(nextConfig, currentConfig) || !equal(nextDefaultConfig, currentDefaultConfig)) {

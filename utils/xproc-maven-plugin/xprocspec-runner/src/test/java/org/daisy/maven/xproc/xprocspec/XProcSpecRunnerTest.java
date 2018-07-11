@@ -10,7 +10,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 
 import org.daisy.maven.xproc.api.XProcEngine;
-import org.daisy.maven.xproc.calabash.Calabash;
 import org.daisy.maven.xproc.xprocspec.XProcSpecRunner.Reporter;
 
 import org.hamcrest.BaseMatcher;
@@ -20,6 +19,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestWatcher;
 import org.junit.Test;
 
 public class XProcSpecRunnerTest {
@@ -31,15 +32,29 @@ public class XProcSpecRunnerTest {
 	private File surefireReportsDir;
 	private File tempDir;
 	
+	@Rule
+	public TestWatcher deleteTempDirsWhenTestSucceeded = new TestWatcher() {
+		@Override
+		protected void failed(Throwable e, org.junit.runner.Description d) {
+			System.out.println(d.getMethodName() + " failed");
+			System.out.println("-> reportsDir was: " + reportsDir);
+			System.out.println("-> surefireReportsDir was:" + surefireReportsDir);
+			System.out.println("-> tempDir was: " + tempDir);
+		}
+		@Override
+		protected void succeeded(org.junit.runner.Description d) {
+			reportsDir.deleteOnExit();
+			surefireReportsDir.deleteOnExit();
+			tempDir.deleteOnExit();
+		}
+	};
+	
 	@Before
 	public void setup() {
-		xprocspecRunner = new XProcSpecRunner();
+		xprocspecRunner = ServiceLoader.load(XProcSpecRunner.class).iterator().next();
 		reportsDir = Files.createTempDir();
-		reportsDir.deleteOnExit();
 		surefireReportsDir = Files.createTempDir();
-		surefireReportsDir.deleteOnExit();
 		tempDir = Files.createTempDir();
-		tempDir.deleteOnExit();
 		System.setProperty("logback.configurationFile", logbackXml.toURI().toASCIIString());
 	}
 	
@@ -199,10 +214,8 @@ public class XProcSpecRunnerTest {
 "Tests run: 1, Failures: 0, Errors: 1, Skipped: 0"                                       + "\n"));
 		stream.reset();
 		setup();
-		Calabash engine = (Calabash)ServiceLoader.load(XProcEngine.class).iterator().next();
-		engine.setConfiguration(new File(testsDir, "foo_implementation_java.xml"));
-		xprocspecRunner.setXProcEngine(engine);
 		xprocspecRunner.run(tests, reportsDir, surefireReportsDir, tempDir, null,
+		                    new File(testsDir, "foo_implementation_java.xml"),
 		                    new Reporter.DefaultReporter(new PrintStream(stream, true)));
 		assertThat(stream.toString(), matchesPattern(
 "-------------------------------------------------------"                                + "\n" +
@@ -251,6 +264,11 @@ public class XProcSpecRunnerTest {
 		public void describeTo(Description description) {
 			description.appendText("matches pattern\n");
 			description.appendText(pattern);
+		}
+		@Override
+		public void describeMismatch(Object item, Description description) {
+			description.appendText("was\n");
+			description.appendText(item.toString());
 		}
 	}
 	
