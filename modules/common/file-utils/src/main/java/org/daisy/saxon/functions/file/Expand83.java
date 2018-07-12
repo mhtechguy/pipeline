@@ -16,6 +16,12 @@ import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 
+import org.osgi.service.component.annotations.Component;
+
+@Component(
+	name = "pf:file-expand83",
+	service = { ExtensionFunctionDefinition.class }
+)
 @SuppressWarnings("serial")
 public class Expand83 extends ExtensionFunctionDefinition {
 
