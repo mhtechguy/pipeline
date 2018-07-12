@@ -77,7 +77,6 @@ public class HtmlizeSourcesMojo extends AbstractMojo {
 	
 	public void execute() throws MojoFailureException {
 		try {
-			@SuppressWarnings("unchecked")
 			final List<String> compileClassPath = mavenProject.getCompileClasspathElements();
 			final XProcEngine engine = new CalabashWithPipelineModules(compileClassPath);
 			List<File> sources = new ArrayList<File>();
