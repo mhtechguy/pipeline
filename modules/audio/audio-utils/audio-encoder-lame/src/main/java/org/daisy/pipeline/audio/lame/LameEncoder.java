@@ -20,6 +20,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import org.osgi.service.component.annotations.Component;
+
+@Component(
+	name = "audio-encoder-lame",
+	immediate = true,
+	service = { AudioEncoder.class }
+)
 public class LameEncoder implements AudioEncoder {
 
 	static private class LameEncodingOptions implements EncodingOptions {

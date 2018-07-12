@@ -34,18 +34,10 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Service-Component>OSGI-INF/encoder.xml</Service-Component>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <properties>
+    <expose-services>
+      org.daisy.pipeline.audio.lame.LameEncoder
+    </expose-services>
+  </properties>
 
 </project>
