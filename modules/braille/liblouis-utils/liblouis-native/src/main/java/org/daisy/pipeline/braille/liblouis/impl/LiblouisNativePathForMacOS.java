@@ -11,9 +11,7 @@ import org.osgi.service.component.ComponentContext;
 
 @Component(
 	name = "org.daisy.pipeline.braille.liblouis.impl.LiblouisNativePathForMacOS",
-	service = {
-		NativePath.class
-	},
+	service = { NativePath.class },
 	property = {
 		"identifier:String=http://www.liblouis.org/native/macosx/",
 		"path:String=/native/macosx",
@@ -23,6 +21,7 @@ import org.osgi.service.component.ComponentContext;
 public class LiblouisNativePathForMacOS extends BundledNativePath {
 	
 	@Activate
+	@Override
 	protected void activate(ComponentContext context, Map<?,?> properties) throws Exception {
 		super.activate(context, properties);
 	}

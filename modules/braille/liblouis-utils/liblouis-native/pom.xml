@@ -21,11 +21,6 @@
       <groupId>org.daisy.pipeline.modules.braille</groupId>
       <artifactId>common-utils</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
 
   <dependencyManagement>
@@ -195,6 +190,13 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Private-Package>
+              org.daisy.pipeline.braille.liblouis.impl
+            </Private-Package>
+          </instructions>
+        </configuration>
         <executions>
           <execution>
             <id>default-bundle</id>
@@ -253,6 +255,19 @@
                 </Include-Resource>
               </instructions>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!--
+          temporarily disable generate-spi-classes
+      -->
+      <plugin>
+        <groupId>org.daisy.pipeline.build</groupId>
+        <artifactId>ds-to-spi-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-spi-classes</id>
+            <phase>none</phase>
           </execution>
         </executions>
       </plugin>

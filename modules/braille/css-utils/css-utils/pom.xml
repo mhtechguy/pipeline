@@ -58,11 +58,6 @@
       <artifactId>slf4j-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
-      <scope>provided</scope>
-    </dependency>
     <!--
         runtime dependencies
     -->
@@ -84,7 +79,16 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
+  
+  <properties>
+    <expose-services>
+      org.daisy.pipeline.braille.css.calabash.impl.CssInlineStep$Provider,
+      org.daisy.pipeline.braille.css.calabash.impl.CssShiftStringSetStep$Provider,
+      org.daisy.pipeline.braille.css.calabash.impl.CssSplitStep$Provider,
+      org.daisy.pipeline.braille.css.saxon.impl.RenderTableByDefinition
+    </expose-services>
+  </properties>
+  
   <build>
     <plugins>
       <plugin>
@@ -104,12 +108,10 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <_dsannotations>
-              org.daisy.pipeline.braille.css.calabash.impl.CssInlineStep$Provider,
-              org.daisy.pipeline.braille.css.calabash.impl.CssShiftStringSetStep$Provider,
-              org.daisy.pipeline.braille.css.calabash.impl.CssSplitStep$Provider,
-              org.daisy.pipeline.braille.css.saxon.impl.RenderTableByDefinition
-            </_dsannotations>
+            <Private-Package>
+              org.daisy.pipeline.braille.css.calabash.impl,
+              org.daisy.pipeline.braille.css.saxon.impl
+            </Private-Package>
           </instructions>
         </configuration>
         <executions>

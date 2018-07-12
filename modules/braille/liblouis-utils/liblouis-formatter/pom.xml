@@ -43,11 +43,6 @@
       <artifactId>org.osgi.core</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
-      <scope>provided</scope>
-    </dependency>
     <!--
         runtime dependencies
     -->
@@ -102,6 +97,13 @@
     </dependency>
   </dependencies>
   
+  <properties>
+    <expose-services>
+      org.daisy.pipeline.braille.pef.impl.NabccEightDotTableProvider,
+      org.daisy.pipeline.braille.liblouis.impl.LiblouisCSSStyledDocumentTransform$Provider
+    </expose-services>
+  </properties>
+  
   <build>
     <plugins>
       <plugin>
@@ -121,13 +123,10 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <!--
-                in order to avoid including services in the same package in other bundles
-            -->
-            <_dsannotations>
-              org.daisy.pipeline.braille.pef.impl.NabccEightDotTableProvider,
-              org.daisy.pipeline.braille.liblouis.impl.LiblouisCSSStyledDocumentTransform$Provider
-            </_dsannotations>
+            <Private-Package>
+              org.daisy.pipeline.braille.pef.impl;-split-package:=first,
+              org.daisy.pipeline.braille.liblouis.impl;-split-package:=first
+            </Private-Package>
             <SPI-Provider>javax.imageio.spi.ServiceRegistry</SPI-Provider>
           </instructions>
         </configuration>
@@ -138,6 +137,23 @@
             <goals>
               <goal>bundle</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.daisy.pipeline.build</groupId>
+        <artifactId>ds-to-spi-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-spi-classes</id>
+            <configuration>
+              <!--
+                  temporarily disable generate-spi-classes for some classes
+              -->
+              <includes>
+                org.daisy.pipeline.braille.pef.impl.NabccEightDotTableProvider
+              </includes>
+            </configuration>
           </execution>
         </executions>
       </plugin>

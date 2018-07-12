@@ -33,11 +33,6 @@
       <groupId>org.daisy.pipeline.modules.braille</groupId>
       <artifactId>css-core</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
-      <scope>provided</scope>
-    </dependency>
     <!--
         runtime dependencies
     -->
@@ -56,6 +51,14 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+  <properties>
+    <expose-services>
+      org.daisy.pipeline.braille.pef.impl.BrailleUtilsFileFormatCatalog,
+      org.daisy.pipeline.braille.pef.impl.BrailleUtilsTableCatalog,
+      org.daisy.pipeline.braille.pef.impl.LocaleBasedTableProvider
+    </expose-services>
+  </properties>
   
   <build>
     <plugins>
@@ -76,7 +79,9 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <_dsannotations>*</_dsannotations>
+            <Private-Package>
+              org.daisy.pipeline.braille.pef.impl
+            </Private-Package>
           </instructions>
         </configuration>
         <executions>

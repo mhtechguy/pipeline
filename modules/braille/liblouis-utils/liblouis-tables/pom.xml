@@ -20,21 +20,20 @@
     <liblouis.version>2.6.3</liblouis.version>
     <liblouis.tarball.url>https://github.com/liblouis/liblouis/tarball/v${liblouis.version}</liblouis.tarball.url>
     <liblouis.tarball.sha1>c3dcdcae2082cc85efc2eacd4923d0b762d27084</liblouis.tarball.sha1>
+    <expose-properties>
+      org.daisy.pipeline.braille.liblouis.impl.DefaultLiblouisTables,
+      org.daisy.pipeline.braille.liblouis.impl.LiblouisHyphenationTables
+    </expose-properties>
   </properties>
   
   <dependencies>
-    <!--
-        runtime dependencies
-    -->
     <dependency>
       <groupId>org.daisy.pipeline.modules.braille</groupId>
       <artifactId>liblouis-core</artifactId>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.daisy.pipeline.modules.braille</groupId>
       <artifactId>libhyphen-core</artifactId>
-      <scope>runtime</scope>
     </dependency>
     <!--
         test dependencies
@@ -71,11 +70,9 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Import-Package>
-              org.daisy.pipeline.braille.liblouis,
-              org.daisy.pipeline.braille.libhyphen
-            </Import-Package>
-            <Service-Component>OSGI-INF/liblouis-default-tables.xml</Service-Component>
+            <Private-Package>
+              org.daisy.pipeline.braille.liblouis.impl;-split-package:=first
+            </Private-Package>
           </instructions>
         </configuration>
         <executions>
@@ -85,6 +82,19 @@
             <goals>
               <goal>manifest</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!--
+          temporarily disable generate-spi-classes
+      -->
+      <plugin>
+        <groupId>org.daisy.pipeline.build</groupId>
+        <artifactId>ds-to-spi-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-spi-classes</id>
+            <phase>none</phase>
           </execution>
         </executions>
       </plugin>

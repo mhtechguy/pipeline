@@ -16,4 +16,15 @@
   
   <name>DP2 Braille Modules :: obfl-utils</name>
   
+  <dependencies>
+    <dependency>
+      <groupId>org.daisy.pipeline</groupId>
+      <artifactId>modules-registry</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.daisy.pipeline</groupId>
+      <artifactId>xmlcatalog</artifactId>
+    </dependency>
+  </dependencies>
+  
 </project>

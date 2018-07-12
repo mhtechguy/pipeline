@@ -39,11 +39,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <scope>provided</scope>
@@ -78,6 +73,13 @@
     </dependency>
   </dependencies>
   
+  <properties>
+    <expose-services>
+      org.daisy.pipeline.braille.libhyphen.impl.LibhyphenJnaImpl,
+      org.daisy.pipeline.braille.libhyphen.impl.LibhyphenTableRegistry
+    </expose-services>
+  </properties>
+  
   <build>
     <plugins>
       <plugin>
@@ -98,8 +100,9 @@
         <configuration>
           <instructions>
             <Export-Package>org.daisy.pipeline.braille.libhyphen</Export-Package>
-            <Private-Package>org.daisy.pipeline.braille.libhyphen.impl</Private-Package>
-            <_dsannotations>*</_dsannotations>
+            <Private-Package>
+              org.daisy.pipeline.braille.libhyphen.impl;-split-package:=first
+            </Private-Package>
           </instructions>
         </configuration>
         <executions>
@@ -109,6 +112,23 @@
             <goals>
               <goal>bundle</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.daisy.pipeline.build</groupId>
+        <artifactId>ds-to-spi-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-spi-classes</id>
+            <configuration>
+              <!--
+                  temporarily disable generate-spi-classes for some classes
+              -->
+              <includes>
+                org.daisy.pipeline.braille.libhyphen.impl.LibhyphenTableRegistry
+              </includes>
+            </configuration>
           </execution>
         </executions>
       </plugin>

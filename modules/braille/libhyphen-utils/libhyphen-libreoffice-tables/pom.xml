@@ -17,15 +17,17 @@
   <name>DP2 Braille Modules :: libhyphen-utils :: libhyphen-libreoffice-tables</name>
   
   <dependencies>
-    <!--
-        runtime dependencies
-    -->
     <dependency>
       <groupId>org.daisy.pipeline.modules.braille</groupId>
       <artifactId>libhyphen-core</artifactId>
-      <scope>runtime</scope>
     </dependency>
   </dependencies>
+  
+  <properties>
+    <expose-services>
+      org.daisy.pipeline.braille.libhyphen.impl.LibreOfficeTables
+    </expose-services>
+  </properties>
   
   <build>
     <plugins>
@@ -34,10 +36,24 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Import-Package>org.daisy.pipeline.braille.libhyphen</Import-Package>
-            <Service-Component>OSGI-INF/libhyphen-libreoffice-tables.xml</Service-Component>
+            <Private-Package>
+              org.daisy.pipeline.braille.libhyphen.impl;-split-package:=first
+            </Private-Package>
           </instructions>
         </configuration>
+      </plugin>
+      <!--
+          temporarily disable generate-spi-classes
+      -->
+      <plugin>
+        <groupId>org.daisy.pipeline.build</groupId>
+        <artifactId>ds-to-spi-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-spi-classes</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

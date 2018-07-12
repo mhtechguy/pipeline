@@ -19,12 +19,9 @@ import static org.daisy.pipeline.braille.common.util.URIs.asURI;
 
 import org.daisy.pipeline.junit.AbstractXSpecAndXProcSpecTest;
 
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.ops4j.pax.exam.util.PathUtils;
 
