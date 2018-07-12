@@ -7,5 +7,5 @@
 	remote = git@github.com:daisy/pipeline-mod-tts.git
 	branch = master
 	commit = af8501cd59c342132617e2189487f2df64210e2e
-	parent = a3244515cc76848db495375eae4febeb82cfc191
+	parent = 6381bb8fd0443fbaefe08347ca397cb56986d91f
 	cmdver = 0.3.1

@@ -36,6 +36,12 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+  <properties>
+    <expose-services>
+      org.daisy.pipeline.tts.attnative.ATTService
+    </expose-services>
+  </properties>
 
   <build>
     <plugins>
@@ -125,7 +131,6 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-	    <Service-Component>OSGI-INF/tts-service.xml</Service-Component>
 	    <Export-Package/>
           </instructions>
         </configuration>
@@ -149,7 +154,6 @@
 		</Bundle-NativeCode>
                 <Include-Resource>
 		  {maven-resources},
-                  OSGI-INF/tts-service.xml=src/main/resources/OSGI-INF/tts-service.xml,
                   lib32/libatt.so=target/generated-resources/native/lib/i386-Linux-gpp/jni/libatt-nar-1.0.0-SNAPSHOT.so,
 		  lib64/libatt.so=target/generated-resources/native/lib/amd64-Linux-gpp/jni/libatt-nar-1.0.0-SNAPSHOT.so
                 </Include-Resource>

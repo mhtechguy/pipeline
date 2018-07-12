@@ -36,6 +36,12 @@
       <artifactId>jnaerator</artifactId>
     </dependency>
   </dependencies>
+  
+  <properties>
+    <expose-services>
+      org.daisy.pipeline.tts.acapella.AcapellaService
+    </expose-services>
+  </properties>
 
   <build>
     <plugins>
@@ -44,7 +50,6 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Service-Component>OSGI-INF/tts-service.xml</Service-Component>
 	    <Export-Package />
           </instructions>
         </configuration>
