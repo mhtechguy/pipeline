@@ -18,6 +18,18 @@
   <name>DAISY Pipeline 2 module :: DTBook to ODT</name>
   
   <dependencies>
+    <dependency>
+      <groupId>org.daisy.pipeline</groupId>
+      <artifactId>framework-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.daisy.pipeline</groupId>
+      <artifactId>modules-registry</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.daisy.pipeline</groupId>
+      <artifactId>xmlcatalog</artifactId>
+    </dependency>
     <!--
         runtime dependencies
     -->
@@ -55,6 +67,12 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+  <properties>
+    <expose-services>
+      org.daisy.pipeline.script.impl.XProcScript_dtbook_to_odt
+    </expose-services>
+  </properties>
   
   <build>
     <resources>
@@ -155,6 +173,17 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Private-Package>
+              org.daisy.pipeline.script.impl;-split-package:=first
+            </Private-Package>
+          </instructions>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>

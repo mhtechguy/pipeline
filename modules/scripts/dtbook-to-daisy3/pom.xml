@@ -17,6 +17,18 @@
   <name>DAISY Pipeline 2 module :: DTBook to DAISY 3</name>
   
   <dependencies>
+    <dependency>
+      <groupId>org.daisy.pipeline</groupId>
+      <artifactId>framework-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.daisy.pipeline</groupId>
+      <artifactId>modules-registry</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.daisy.pipeline</groupId>
+      <artifactId>xmlcatalog</artifactId>
+    </dependency>
     <!--
         runtime dependencies
     -->
@@ -189,6 +201,12 @@
     -->
   </dependencies>
   
+  <properties>
+    <expose-services>
+      org.daisy.pipeline.script.impl.XProcScript_dtbook_to_daisy3
+    </expose-services>
+  </properties>
+  
   <build>
     <plugins>
       <plugin>
@@ -198,6 +216,17 @@
           <systemPropertyVariables>
             <target.dir>${project.build.directory}</target.dir>
           </systemPropertyVariables>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Private-Package>
+              org.daisy.pipeline.script.impl;-split-package:=first
+            </Private-Package>
+          </instructions>
         </configuration>
       </plugin>
     </plugins>
