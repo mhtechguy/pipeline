@@ -748,7 +748,7 @@
 				    transitive dependencies of B as defined in the module (the snapshot) and the
 				    transitive dependencies of the non-snapshot version of B are the same.
 				-->
-				<xsl:when test="self::pom:dependency and not(pom:scope='test') and not(pom:scope='provided')">
+				<xsl:when test="self::pom:dependency">
 					<xsl:apply-templates select="$managed-internal-runtime-dependencies/pom:project[pom:groupId=$groupId and
 					                                                                                pom:artifactId=$artifactId]">
 						<xsl:with-param name="managed-internal-runtime-dependencies" select="$managed-internal-runtime-dependencies"/>
