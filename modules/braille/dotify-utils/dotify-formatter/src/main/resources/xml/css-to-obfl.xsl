@@ -1391,7 +1391,8 @@
     <!--
         ignore page-break-before on first box of sequence
     -->
-    <xsl:template mode="block-attr
+    <xsl:template priority="0.6"
+                  mode="block-attr
                         table-attr"
                   match="css:box[@type='block'][not(parent::css:box) and not(preceding-sibling::*)]/@css:page-break-before[.='always']">
         <xsl:param name="first-in-sequence" as="xs:boolean" tunnel="yes" select="true()"/>
