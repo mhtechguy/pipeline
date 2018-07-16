@@ -10,12 +10,13 @@ cd $(dirname "$0")
 # download test DTBook from https://github.com/daisy/pipeline-samples
 DATA_DIR=../../../target/test-docker/data
 mkdir -p $DATA_DIR
-cd $DATA_DIR
 DTBOOK=hauy_valid.xml
+cp $DTBOOK $DATA_DIR
+cd $DATA_DIR
 DATA=$(basename $DTBOOK).zip
 rm -f $DATA
+cd $DTBOOK
 for f in \
-    $DTBOOK \
     dtbook.2005.basic.css \
     valentin.jpg
 do
@@ -57,9 +58,11 @@ docker run --name cli --rm -it --link pipeline \
        --starting false \
        --client_key $CLIENTKEY \
        --client_secret $CLIENTSECRET \
-       dtbook-to-epub3 --source $DTBOOK --output $MOUNT_POINT --data $MOUNT_POINT/$DATA --persistent
-#       help dtbook-to-epub3
-#       dtbook-validator --input-dtbook $DTBOOK --output $MOUNT_POINT --data $MOUNT_POINT/$DATA
+       celia:dtbook-to-pef --source $DTBOOK --output $MOUNT_POINT --data $MOUNT_POINT/$DATA --persistent \
+                           --stylesheet "http://www.daisy.org/pipeline/modules/braille/dtbook-to-pef/xsl/volume-breaking.xsl \
+                                         http://www.celia.fi/pipeline/modules/braille/default.scss \
+                                         http://www.daisy.org/pipeline/modules/braille/dtbook-to-pef/css/volume-breaking.scss" \
+                           --maximum-number-of-sheets 50
 
 docker stop pipeline
 docker rm pipeline
