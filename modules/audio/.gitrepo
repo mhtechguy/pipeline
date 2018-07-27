@@ -7,5 +7,5 @@
 	remote = git@github.com:daisy/pipeline-mod-audio.git
 	branch = master
 	commit = d5b5631aa5a4ef8a19ebafbfb22676c30ebf1981
-	parent = 586b3dbee8ab6fc97e21aee7a1aef4f5bfd2f345
+	parent = e39d958209e955f3030e5cd722d4bb9583107051
 	cmdver = 0.3.1
