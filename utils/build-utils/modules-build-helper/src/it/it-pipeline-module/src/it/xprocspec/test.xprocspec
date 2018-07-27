@@ -19,20 +19,40 @@
 	<x:scenario label="test">
 		<x:call step="pxi:dummy"/>
 		<x:context label="The JAR content">
-			<x:document type="zip" href="../../../target/it-pipeline-module-0-SNAPSHOT.jar"/>
+			<x:document type="zip" href="../../../target/it-pipeline-module-0-SNAPSHOT.jar" ordered="true"/>
 		</x:context>
 		<x:expect label="The JAR content" type="compare">
 			<x:document type="inline">
 				<c:zipfile name="it-pipeline-module-0-SNAPSHOT.jar">
 					<c:file name="META-INF/MANIFEST.MF"/>
 					<c:file name="META-INF/catalog.xml"/>
-					<c:file name="OSGI-INF/choice.xml"/>
+					<c:file name="META-INF/services/org.daisy.Foo"/>
+					<c:file name="META-INF/services/org.daisy.common.spi.CreateOnStart"/>
+					<c:file name="META-INF/services/org.daisy.common.xproc.calabash.XProcStepProvider"/>
+					<c:file name="META-INF/services/org.daisy.pipeline.datatypes.DatatypeService"/>
+					<c:file name="META-INF/services/org.daisy.pipeline.script.XProcScriptService"/>
+					<c:file name="OSGI-INF/foo-choice.xml"/>
+					<c:file name="OSGI-INF/foo-service.xml"/>
+					<c:file name="OSGI-INF/java-step.xml"/>
+					<c:file name="OSGI-INF/px-script-option-1.xml"/>
 					<c:file name="OSGI-INF/script.xml"/>
 					<c:file name="css/foo.css"/>
+					<c:file name="data-types/script-option-1.xml"/>
 					<c:file name="data-types/type.xml"/>
 					<c:file name="impl/JavaStep$1.class"/>
 					<c:file name="impl/JavaStep$Provider.class"/>
 					<c:file name="impl/JavaStep.class"/>
+					<c:file name="impl/JavaStep_Provider_SPI.class"/>
+					<c:file name="org/daisy/Foo.class"/>
+					<c:file name="org/daisy/impl/FooImpl.class"/>
+					<c:file name="org/daisy/impl/FooImpl_SPI.class"/>
+					<c:file name="org/daisy/pipeline/datatypes/impl/Datatype_foo_choice.class"/>
+					<c:file name="org/daisy/pipeline/datatypes/impl/Datatype_foo_choice_SPI.class"/>
+					<c:file name="org/daisy/pipeline/datatypes/impl/Datatype_px_script_option_1.class"/>
+					<c:file name="org/daisy/pipeline/datatypes/impl/Datatype_px_script_option_1_SPI.class"/>
+					<c:file name="org/daisy/pipeline/script/impl/XProcScript_script.class"/>
+					<c:file name="org/daisy/pipeline/script/impl/XProcScript_script_SPI.class"/>
+					<c:file name="xml/__processed__script.xpl"/>
 					<c:file name="xml/a.xml"/>
 					<c:file name="xml/a.xml.xsl"/>
 					<c:file name="xml/foo.xpl"/>
@@ -48,11 +68,76 @@
 		<x:expect label="The META-INF/catalog.xml file" type="compare">
 			<x:document type="inline">
 				<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
-					<uri name="http://www.daisy.org/pipeline/modules/foo-utils/script.xpl" uri="../xml/script.xpl"/>
+					<uri name="http://www.daisy.org/pipeline/modules/foo-utils/script.xpl" uri="../xml/__processed__script.xpl"/>
 					<uri name="http://www.daisy.org/pipeline/modules/foo-utils/library.xpl" uri="../xml/library.xpl"/>
 					<uri name="http://www.daisy.org/pipeline/modules/foo-utils/foo.css" uri="../css/foo.css"/>
 					<uri name="http://www.daisy.org/pipeline/modules/foo-utils/type.xml" uri="../data-types/type.xml"/>
+					<uri name="http://www.daisy.org/pipeline/modules/foo-utils/script.xpl/data-types/script-option-1.xml"
+					     uri="../data-types/script-option-1.xml"/>
 				</catalog>
+			</x:document>
+		</x:expect>
+		<x:context label="The datatype file">
+			<x:document type="file" href="../../../target/it-pipeline-module-0-SNAPSHOT.jar!/data-types/script-option-1.xml"/>
+		</x:context>
+		<x:expect label="The datatype file" type="compare">
+			<x:document type="inline">
+				<choice id="px:script-option-1">
+					<value>value-1</value>
+					<value>value-2</value>
+				</choice>
+			</x:document>
+		</x:expect>
+		<x:context label="The datatype DS file">
+			<x:document type="file" href="../../../target/it-pipeline-module-0-SNAPSHOT.jar!/OSGI-INF/px-script-option-1.xml"/>
+		</x:context>
+		<x:expect label="The datatype DS file" type="compare">
+			<x:document type="inline">
+				<scr:component immediate="true" activate="activate" name="px:script-option-1">
+					<implementation class="org.daisy.pipeline.datatypes.impl.Datatype_px_script_option_1"/>
+					<service>
+						<provide interface="org.daisy.pipeline.datatypes.DatatypeService"/>
+					</service>
+					<reference bind="setUriResolver" cardinality="1..1"
+					           interface="javax.xml.transform.URIResolver" name="URIResolver" policy="static"/>
+					<property name="data-type.id" type="String" value="px:script-option-1"/>
+					<property name="data-type.url" type="String"
+					          value="http://www.daisy.org/pipeline/modules/foo-utils/script.xpl/data-types/script-option-1.xml"/>
+				</scr:component>
+			</x:document>
+		</x:expect>
+		<x:context label="The processed script file">
+			<x:document type="file" href="../../../target/it-pipeline-module-0-SNAPSHOT.jar!/xml/__processed__script.xpl"/>
+		</x:context>
+		<x:expect label="The processed script file" type="compare">
+			<x:document type="inline">
+				<p:declare-step type="px:script" version="1.0">
+					<p:documentation xmlns="http://www.w3.org/1999/xhtml">
+						<h1 px:role="name">Example script</h1>
+						<p px:role="desc">Does stuff.</p>
+					</p:documentation>
+					<p:input port="source">
+						<p:documentation xmlns="http://www.w3.org/1999/xhtml">
+							<h1 px:role="name">Source document</h1>
+						</p:documentation>
+					</p:input>
+					<p:option name="option-1" required="true" px:data-type="px:script-option-1">
+						<p:documentation xmlns="http://www.w3.org/1999/xhtml">
+							<h1 px:role="name">Option 1</h1>
+							<p px:role="desc" xml:space="preserve">Enables something.
+
+							For more info see [link](http://example.org/more-info).</p>
+						</p:documentation>
+					</p:option>
+					<p:option name="option-2" required="false" select="'xyz'">
+						<p:documentation xmlns="http://www.w3.org/1999/xhtml">
+							<h1 px:role="name">Option 2</h1>
+						</p:documentation>
+					</p:option>
+					<p:output port="result"/>
+					<p:import href="foo.xpl"/>
+					<px:foo/>
+				</p:declare-step>
 			</x:document>
 		</x:expect>
 		<x:context label="The OSGI-INF/script.xml file">
@@ -60,47 +145,64 @@
 		</x:context>
 		<x:expect label="The OSGI-INF/script.xml file" type="compare">
 			<x:document type="inline">
-				<scr:component immediate="true" name="script">
-					<scr:implementation class="org.daisy.pipeline.script.XProcScriptService"/>
-					<scr:service>
-						<scr:provide interface="org.daisy.pipeline.script.XProcScriptService"/>
-					</scr:service>
-					<scr:property name="script.id" type="String" value="script"/>
-					<scr:property name="script.name" type="String" value="Example script"/>
-					<scr:property name="script.description" type="String" value="Does stuff."/>
-					<scr:property name="script.url" type="String" value="http://www.daisy.org/pipeline/modules/foo-utils/script.xpl"/>
-					<scr:property name="script.version" type="String" value="0-SNAPSHOT"/>
+				<scr:component immediate="true" activate="activate" name="script">
+					<implementation class="org.daisy.pipeline.script.impl.XProcScript_script"/>
+					<service>
+						<provide interface="org.daisy.pipeline.script.XProcScriptService"/>
+					</service>
+					<property name="script.version" type="String" value="0-SNAPSHOT"/>
+					<property name="script.id" type="String" value="script"/>
+					<property name="script.description" type="String" value="Does stuff."/>
+					<property name="script.url" type="String" value="http://www.daisy.org/pipeline/modules/foo-utils/script.xpl"/>
 				</scr:component>
 			</x:document>
 		</x:expect>
-		<x:context label="The OSGI-INF/choice.xml file">
-			<x:document type="file" href="../../../target/it-pipeline-module-0-SNAPSHOT.jar!/OSGI-INF/choice.xml"/>
+		<x:context label="The OSGI-INF/foo-choice.xml file">
+			<x:document type="file" href="../../../target/it-pipeline-module-0-SNAPSHOT.jar!/OSGI-INF/foo-choice.xml"/>
 		</x:context>
-		<x:expect label="The OSGI-INF/choice.xml file" type="compare">
+		<x:expect label="The OSGI-INF/foo-choice.xml file" type="compare">
 			<x:document type="inline">
-				<scr:component immediate="true" name="foo:choice">
-					<scr:implementation class="org.daisy.pipeline.datatypes.UrlBasedDatatypeService"/>
-					<scr:service>
-						<scr:provide interface="org.daisy.pipeline.datatypes.DatatypeService"/>
-					</scr:service>
-					<scr:reference bind="setUriResolver" cardinality="1..1" interface="javax.xml.transform.URIResolver" name="resolver" policy="static"/>
-					<scr:property name="data-type.id" type="String" value="foo:choice"/>
-					<scr:property name="data-type.url" type="String" value="http://www.daisy.org/pipeline/modules/foo-utils/type.xml"/>
+				<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="foo:choice" immediate="true" activate="activate">
+					<implementation class="org.daisy.pipeline.datatypes.impl.Datatype_foo_choice"/>
+					<service>
+						<provide interface="org.daisy.pipeline.datatypes.DatatypeService"/>
+					</service>
+					<reference bind="setUriResolver" cardinality="1..1" interface="javax.xml.transform.URIResolver" name="URIResolver" policy="static"/>
+					<property name="data-type.id" type="String" value="foo:choice"/>
+					<property name="data-type.url" type="String" value="http://www.daisy.org/pipeline/modules/foo-utils/type.xml"/>
 				</scr:component>
 			</x:document>
 		</x:expect>
 		<x:context label="The 'doc' JAR content">
-			<x:document type="zip" href="../../../target/it-pipeline-module-0-SNAPSHOT-doc.jar"/>
+			<x:document type="zip" href="../../../target/it-pipeline-module-0-SNAPSHOT-doc.jar" ordered="true"/>
 		</x:context>
-		<x:expect label="The 'doc' JAR content" type="compare" pending="order of zip entries is undeterministic">
+		<x:expect label="The 'doc' JAR content" type="compare">
 			<x:document type="inline">
 				<c:zipfile name="it-pipeline-module-0-SNAPSHOT-doc.jar">
 					<c:file name="META-INF/MANIFEST.MF"/>
 					<c:file name="src/main/java/allclasses-frame.html"/>
 					<c:file name="src/main/java/impl/JavaStep.html"/>
+					<c:file name="src/main/java/impl/JavaStep_Provider_SPI.html"/>
 					<c:file name="src/main/java/impl/package-frame.html"/>
 					<c:file name="src/main/java/impl/package-summary.html"/>
 					<c:file name="src/main/java/index.html"/>
+					<c:file name="src/main/java/org/daisy/Foo.html"/>
+					<c:file name="src/main/java/org/daisy/impl/FooImpl.html"/>
+					<c:file name="src/main/java/org/daisy/impl/FooImpl_SPI.html"/>
+					<c:file name="src/main/java/org/daisy/impl/package-frame.html"/>
+					<c:file name="src/main/java/org/daisy/impl/package-summary.html"/>
+					<c:file name="src/main/java/org/daisy/package-frame.html"/>
+					<c:file name="src/main/java/org/daisy/package-summary.html"/>
+					<c:file name="src/main/java/org/daisy/pipeline/datatypes/impl/Datatype_foo_choice.html"/>
+					<c:file name="src/main/java/org/daisy/pipeline/datatypes/impl/Datatype_foo_choice_SPI.html"/>
+					<c:file name="src/main/java/org/daisy/pipeline/datatypes/impl/Datatype_px_script_option_1.html"/>
+					<c:file name="src/main/java/org/daisy/pipeline/datatypes/impl/Datatype_px_script_option_1_SPI.html"/>
+					<c:file name="src/main/java/org/daisy/pipeline/datatypes/impl/package-frame.html"/>
+					<c:file name="src/main/java/org/daisy/pipeline/datatypes/impl/package-summary.html"/>
+					<c:file name="src/main/java/org/daisy/pipeline/script/impl/XProcScript_script.html"/>
+					<c:file name="src/main/java/org/daisy/pipeline/script/impl/XProcScript_script_SPI.html"/>
+					<c:file name="src/main/java/org/daisy/pipeline/script/impl/package-frame.html"/>
+					<c:file name="src/main/java/org/daisy/pipeline/script/impl/package-summary.html"/>
 					<c:file name="src/main/java/overview-frame.html"/>
 					<c:file name="src/main/java/overview-summary.html"/>
 					<c:file name="src/main/resources/META-INF/catalog.xml/index.html"/>
@@ -116,13 +218,36 @@
 			</x:document>
 		</x:expect>
 		<x:context label="The 'javadoc' JAR content">
-			<x:document type="zip" href="../../../target/it-pipeline-module-0-SNAPSHOT-javadoc.jar"/>
+			<x:document type="zip" href="../../../target/it-pipeline-module-0-SNAPSHOT-javadoc.jar" ordered="true"/>
 		</x:context>
-		<x:expect label="The 'javadoc' JAR contains the JavaStep javadoc" type="xpath" test="/c:zipfile/c:file[@name='impl/JavaStep.html']"/>
+		<x:expect label="The 'javadoc' JAR content" type="compare">
+			<x:document type="inline">
+				<c:zipfile name="it-pipeline-module-0-SNAPSHOT-javadoc.jar">
+					<c:file name="META-INF/MANIFEST.MF"/>
+					<c:file name="allclasses-frame.html"/>
+					<c:file name="allclasses-noframe.html"/>
+					<c:file name="constant-values.html"/>
+					<c:file name="deprecated-list.html"/>
+					<c:file name="help-doc.html"/>
+					<c:file name="index-all.html"/>
+					<c:file name="index.html"/>
+					<c:file name="org/daisy/Foo.html"/>
+					<c:file name="org/daisy/class-use/Foo.html"/>
+					<c:file name="org/daisy/package-frame.html"/>
+					<c:file name="org/daisy/package-summary.html"/>
+					<c:file name="org/daisy/package-tree.html"/>
+					<c:file name="org/daisy/package-use.html"/>
+					<c:file name="overview-tree.html"/>
+					<c:file name="package-list"/>
+					<c:file name="script.js"/>
+					<c:file name="stylesheet.css"/>
+				</c:zipfile>
+			</x:document>
+		</x:expect>
 		<x:context label="The 'xprocdoc' JAR content">
-			<x:document type="zip" href="../../../target/it-pipeline-module-0-SNAPSHOT-xprocdoc.jar"/>
+			<x:document type="zip" href="../../../target/it-pipeline-module-0-SNAPSHOT-xprocdoc.jar" ordered="true"/>
 		</x:context>
-		<x:expect label="The 'xprocdoc' JAR content" type="compare" pending="order of zip entries is undeterministic">
+		<x:expect label="The 'xprocdoc' JAR content" type="compare">
 			<x:document type="inline">
 				<c:zipfile name="it-pipeline-module-0-SNAPSHOT-xprocdoc.jar">
 					<c:file name="META-INF/MANIFEST.MF"/>
