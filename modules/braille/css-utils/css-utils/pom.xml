@@ -11,15 +11,27 @@
   </parent>
 
   <artifactId>css-utils</artifactId>
-  <version>3.4.1-SNAPSHOT</version>
+  <version>3.5.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
 
   <name>DP2 Braille Modules :: css-utils :: css-utils</name>
   
   <dependencies>
     <dependency>
+      <groupId>org.daisy.pipeline</groupId>
+      <artifactId>modules-registry</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.daisy.pipeline</groupId>
+      <artifactId>xmlcatalog</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.daisy.pipeline.modules.braille</groupId>
       <artifactId>css-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.daisy.pipeline</groupId>
+      <artifactId>common-utils</artifactId>
     </dependency>
     <dependency>
       <groupId>org.daisy.pipeline.modules.braille</groupId>
@@ -63,12 +75,18 @@
       <artifactId>org.osgi.compendium</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.daisy.pipeline</groupId>
+      <artifactId>ds-to-spi-runtime</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <!--
         runtime dependencies
     -->
     <dependency>
       <groupId>org.daisy.pipeline.modules</groupId>
       <artifactId>common-utils</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <!--
         test dependencies
@@ -84,9 +102,59 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
+  
+  <properties>
+    <expose-services>
+      org.daisy.pipeline.modules.impl.Module_braille_css_utils,
+      org.daisy.pipeline.braille.css.calabash.impl.CssInlineStep$Provider,
+      org.daisy.pipeline.braille.css.calabash.impl.CssShiftStringSetStep$Provider,
+      org.daisy.pipeline.braille.css.calabash.impl.CssSplitStep$Provider,
+      org.daisy.pipeline.braille.css.saxon.impl.RenderTableByDefinition
+    </expose-services>
+  </properties>
+  
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.daisy.pipeline.build</groupId>
+        <artifactId>modules-build-helper</artifactId>
+        <executions>
+          <execution>
+            <id>process-catalog</id>
+            <configuration>
+              <!--
+                  avoid name collision
+              -->
+              <moduleName>braille-${project.artifactId}</moduleName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>process-test-catalog</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>process-test-catalog</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.daisy.pipeline.build</groupId>
+        <artifactId>ds-to-spi-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-spi-test-classes</id>
+            <phase>process-test-sources</phase>
+            <goals>
+              <goal>generate-spi-test-classes</goal>
+            </goals>
+            <configuration>
+              <includes>
+                org.daisy.pipeline.modules.impl.Module_test_module
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.ops4j.pax.exam</groupId>
         <artifactId>maven-paxexam-plugin</artifactId>
@@ -104,12 +172,11 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <_dsannotations>
-              org.daisy.pipeline.braille.css.calabash.impl.CssInlineStep$Provider,
-              org.daisy.pipeline.braille.css.calabash.impl.CssShiftStringSetStep$Provider,
-              org.daisy.pipeline.braille.css.calabash.impl.CssSplitStep$Provider,
-              org.daisy.pipeline.braille.css.saxon.impl.RenderTableByDefinition
-            </_dsannotations>
+            <Private-Package>
+              org.daisy.pipeline.modules.impl;-split-package:=first,
+              org.daisy.pipeline.braille.css.calabash.impl,
+              org.daisy.pipeline.braille.css.saxon.impl
+            </Private-Package>
           </instructions>
         </configuration>
         <executions>

@@ -15,12 +15,12 @@ import java.util.Map;
 
 import com.google.common.base.Function;
 
+import static org.daisy.common.file.URLs.asURL;
 import org.daisy.pipeline.braille.common.NativePath;
 import org.daisy.pipeline.braille.common.ResourceResolver;
 import static org.daisy.pipeline.braille.common.util.Files.asFile;
 import static org.daisy.pipeline.braille.common.util.Files.isAbsoluteFile;
 import static org.daisy.pipeline.braille.common.util.Strings.join;
-import static org.daisy.pipeline.braille.common.util.URLs.asURL;
 
 import org.daisy.pipeline.braille.liblouis.LiblouisTable;
 import org.daisy.pipeline.braille.liblouis.LiblouisTableResolver;
@@ -68,7 +68,7 @@ public class LiblouisutdmlProcessBuilderImpl implements Liblouisutdml {
 		policy = ReferencePolicy.STATIC
 	)
 	protected void bindExecutable(NativePath nativePath) {
-		URI executablePath = nativePath.get("file2brl").iterator().next();
+		URI executablePath = nativePath.get("liblouisutdml/file2brl").iterator().next();
 		file2brl = asFile(nativePath.resolve(executablePath));
 		logger.debug("Registering file2brl executable: " + executablePath);
 	}
