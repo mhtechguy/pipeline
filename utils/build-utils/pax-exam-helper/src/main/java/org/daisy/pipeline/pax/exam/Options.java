@@ -88,7 +88,7 @@ public abstract class Options {
 	}
 	
 	public static MavenBundle felixDeclarativeServices() {
-		return mavenBundle().groupId("org.apache.felix").artifactId("org.apache.felix.scr").version("1.6.2");
+		return mavenBundle().groupId("org.apache.felix").artifactId("org.apache.felix.scr").versionAsInProject();
 	}
 	
 	public static Option spiflyBundles() {
@@ -100,6 +100,8 @@ public abstract class Options {
 	}
 	
 	public static MavenBundle logbackClassic() {
+		// fixed version that is compatible with slf4j version used by Pipeline
+		// can not be put on the class path because Pax Exam itself depends on version 0.9.30
 		return mavenBundle("ch.qos.logback:logback-classic:1.0.11");
 	}
 	
@@ -593,7 +595,7 @@ public abstract class Options {
 				jar = new JarFile(bundle, false);
 				Manifest manifest = jar.getManifest();
 				if (manifest == null)
-					throw new RuntimeException("[" + bundle + "] is not a valid bundle: manifest is missing");
+					throw new InvalidBundleException("[" + bundle + "] is not a valid bundle: manifest is missing");
 				Attributes mainAttrs = manifest.getMainAttributes();
 				String bundleSymbolicName = mainAttrs.getValue("Bundle-SymbolicName");
 				String bundleName = mainAttrs.getValue("Bundle-Name");
@@ -601,7 +603,7 @@ public abstract class Options {
 					throw new InvalidBundleException("[" + bundle + "] is not a valid bundle: Bundle-SymbolicName and Bundle-Name are missing");
 				return (mainAttrs.getValue("Fragment-Host") != null); }
 			catch (IOException e) {
-				throw new RuntimeException("[" + bundle + "] is not a valid bundle: failed reading jar", e); }
+				throw new InvalidBundleException("[" + bundle + "] is not a valid bundle: failed reading jar", e); }
 			finally {
 				if (jar != null)
 					try {
@@ -623,6 +625,9 @@ public abstract class Options {
 		private static class InvalidBundleException extends Exception {
 			InvalidBundleException(String message) {
 				super(message);
+			}
+			InvalidBundleException(String message, Throwable cause) {
+				super(message, cause);
 			}
 		}
 	}
