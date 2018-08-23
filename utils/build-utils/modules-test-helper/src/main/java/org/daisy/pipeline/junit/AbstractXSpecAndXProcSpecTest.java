@@ -15,8 +15,6 @@ import static org.daisy.pipeline.pax.exam.Options.mavenBundles;
 import static org.daisy.pipeline.pax.exam.Options.xprocspec;
 import static org.daisy.pipeline.pax.exam.Options.xspec;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import org.ops4j.pax.exam.Configuration;
@@ -38,7 +36,10 @@ public abstract class AbstractXSpecAndXProcSpecTest extends AbstractTest {
 				reportsDir = new File(baseDir, "target/surefire-reports-" + i);
 			reportsDir.mkdirs();
 			TestResults result = xspecRunner.run(testsDir, reportsDir);
-			assertEquals("Number of failures and errors should be zero", 0L, result.getFailures() + result.getErrors());
+			if (result.getFailures() > 0 || result.getErrors() > 0) {
+				System.out.println(result.toDetailedString());
+				 throw new AssertionError("There are XSpec test failures.");
+			}
 		}
 	}
 	
@@ -64,7 +65,8 @@ public abstract class AbstractXSpecAndXProcSpecTest extends AbstractTest {
 			                                      surefireDir,
 			                                      tmpDir,
 			                                      new XProcSpecRunner.Reporter.DefaultReporter());
-			assertTrue("XProcSpec tests should run with success", success);
+			if (!success)
+				throw new AssertionError("There are XProcSpec test failures.");
 		}
 	}
 	
