@@ -112,6 +112,7 @@
             </plugin>
             
             <!-- run xprocspec tests on xprocspec -->
+            <!--
             <plugin>
               <groupId>org.daisy.maven</groupId>
               <artifactId>xproc-maven-plugin</artifactId>
@@ -126,7 +127,6 @@
               </executions>
               <dependencies>
                 <dependency>
-                  <!-- use project version of xprocspec -->
                   <groupId>org.daisy.xprocspec</groupId>
                   <artifactId>xprocspec</artifactId>
                   <version>${project.version}</version>
@@ -143,6 +143,7 @@
                 </dependency>
               </dependencies>
             </plugin>
+            -->
             
             <!-- OSGi packagine -->
             <plugin>
