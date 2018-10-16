@@ -222,7 +222,7 @@ public abstract class Options {
 				if (groupId.equals("org.daisy.xprocspec") && artifactId.equals("xprocspec")) {
 					String osgiVersion = "";
 					int i = 0;
-					for (String segment : version.split("\\.")) {
+					for (String segment : version.split("[\\.-]")) {
 						if (i > 3)
 							osgiVersion += "-";
 						else if (i > 0)
