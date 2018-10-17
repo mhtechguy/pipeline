@@ -201,7 +201,9 @@ assembly/.dependencies : \
 
 cli/build/bin/darwin_386/dp2 cli/build/bin/linux_386/dp2 : cli/.install
 
-cli/.install : cli/cli/*.go
+export PIPELINE_CLIENTLIB_PATH = $(CURDIR)/clientlib/go
+
+cli/.install : cli/cli/*.go clientlib/go/*.go cli/libs/go-subcommand/*.go cli/libs/blackterm/*.go
 
 .SECONDARY : cli/.install-darwin_386.zip cli/.install-linux_386.zip cli/.install-windows_386.zip
 cli/.install-darwin_386.zip cli/.install-linux_386.zip cli/.install-windows_386.zip : cli/.install
